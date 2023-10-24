@@ -33,10 +33,6 @@
 						<li class="nav-item">
 							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
 						</li>
-						
-						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Auths" asp-action="Login">login</a>
-						</li>
 
 					</ul>
 					<div class="d-flex align-items-center">
@@ -46,8 +42,6 @@
 								@User?.Identity?.Name
 							</div>
 
-							
-							
 						}
 						else
 						{
@@ -59,7 +53,7 @@
 							<a class="btn me-3 bg-light text-dark"
 							   asp-area=""
 							   asp-controller="Auths"
-							   asp-action="Log in">Login</a>
+							   asp-action="Login">Login</a>
 						}
 					</div>
 				</div>
