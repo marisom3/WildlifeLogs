@@ -1,0 +1,46 @@
+﻿@model IEnumerable<WildlifeLog.UI.Models.DTO.LogDto>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome To WildlifeLogs!</h1>
+    <p>Welcome to our Citizen Scientist Wildlife Sightings website! Join our community of nature enthusiasts and record your wildlife encounters. Whether you're an experienced naturalist or a novice, your observations contribute to valuable research and conservation efforts. Document your sightings of birds, mammals, insects, and more in our user-friendly database. Explore a wealth of resources, engage in informative discussions, and learn from fellow citizen scientists. Together, we can make a positive impact on our environment and biodiversity. Get started today, and let's embark on a journey of discovery, one sighting at a time. Join the movement for a greener, healthier planet.</a>.</p>
+</div>
+
+<h2>All WildlifeLogs</h2>
+<table class=" = tabe table-bordered">
+    <thead>
+        <tr>
+            
+            <th>Observer's Name</th>
+            <th>Date</th>
+            <th>Confidence</th>
+            <th>Species</th>
+            <th>Count</th>
+            <th>Description</th>
+            <th>Location</th>
+            <th>Park</th>
+			<th>Anmal Type</th>
+			<th>Image</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var log in Model)
+        {
+            <tr>
+                
+                <td>@log.ObserverName</td>
+                <td>@log.Date</td>
+                <td>@log.Confidence</td>
+                <td>@log.Species</td>
+                <td>@log.Count</td>
+                <td>@log.Description</td>
+                <td>@log.Location</td>
+                <td>@log.Park.Name</td>
+				<td>@log.Category.Name</td>
+				<td>@log.LogImageUrl</td>
+            </tr>
+        }
+    </tbody>
+</table>

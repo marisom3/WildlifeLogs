@@ -1,0 +1,37 @@
+﻿@model IEnumerable<WildlifeLog.UI.Models.DTO.ParkDto>
+@{
+}
+
+<h1 class="mt-3">Parks</h1>
+
+<div class="d-flex justify-content-end">
+	<a class="btn btn-secondary" asp-controller="Parks" asp-action="Add">Add Park</a>
+</div>
+
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Name</th>
+			<th>Address</th>
+			<th>Ecosystem</th>
+			<th> </th>
+			
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var park in Model)
+		{
+			<tr>
+				<td>@park.Id</td>
+				<td>@park.Name</td>
+				<td>@park.Address</td>
+				<td>@park.Ecosystem</td>
+				<td>
+					<a asp-controller="Parks" asp-action="Edit" asp-route-id="@park.Id" class="btn btn-light">Edit</a>
+				</td>
+
+			</tr>
+		}
+	</tbody>
+</table>

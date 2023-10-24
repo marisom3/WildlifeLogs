@@ -1,0 +1,11 @@
+﻿namespace WildlifeLogAPI.Models.DTO
+{
+    public class ParkDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string Ecosystem { get; set; }
+        public string? ParkImageUrl { get; set; }
+    }
+}
