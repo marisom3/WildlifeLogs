@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WildlifeLogAPI", "WildlifeL
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WildlifeLog.UI", "WildlifeLog.UI\WildlifeLog.UI.csproj", "{FCCF811E-764B-45EA-B6C7-D67A399A9731}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{22F12EEA-0E89-4174-8BAF-0394AD32B6A5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{FCCF811E-764B-45EA-B6C7-D67A399A9731}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCCF811E-764B-45EA-B6C7-D67A399A9731}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCCF811E-764B-45EA-B6C7-D67A399A9731}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22F12EEA-0E89-4174-8BAF-0394AD32B6A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22F12EEA-0E89-4174-8BAF-0394AD32B6A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22F12EEA-0E89-4174-8BAF-0394AD32B6A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22F12EEA-0E89-4174-8BAF-0394AD32B6A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
