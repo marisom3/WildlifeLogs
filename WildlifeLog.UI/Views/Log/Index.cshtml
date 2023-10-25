@@ -1,0 +1,41 @@
+﻿@model IEnumerable<WildlifeLog.UI.Models.DTO.LogDto>
+
+@{
+}
+
+<h2>All WildlifeLogs</h2>
+<table class=" = tabe table-bordered">
+    <thead>
+        <tr>
+
+            <th>Observer's Name</th>
+            <th>Date</th>
+            <th>Confidence</th>
+            <th>Species</th>
+            <th>Count</th>
+            <th>Description</th>
+            <th>Location</th>
+            <th>Park</th>
+            <th>Anmal Type</th>
+            <th>Image</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model)
+        {
+            <tr>
+
+                <td>@log.ObserverName</td>
+                <td>@log.Date</td>
+                <td>@log.Confidence</td>
+                <td>@log.Species</td>
+                <td>@log.Count</td>
+                <td>@log.Description</td>
+                <td>@log.Location</td>
+                <td>@log.Park.Name</td>
+                <td>@log.Category.Name</td>
+                <td>@log.LogImageUrl</td>
+            </tr>
+        }
+    </tbody>
+</table>
