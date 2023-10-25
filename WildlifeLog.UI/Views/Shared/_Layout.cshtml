@@ -1,8 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@{
-	var userManager = Context.RequestServices.GetRequiredService<UserManager<IdentityUser>>();
-	var user = await userManager.GetUserAsync(User);
-}
+@inject SignInManager<IdentityUser> signInManager
 
 
 
@@ -40,10 +37,10 @@
 
 					</ul>
 					<div class="d-flex align-items-center">
-						@if(user != null)
+						@if(signInManager.IsSignedIn(User))
 						{
 							<div class="me-3 text-light">
-								@user.UserName
+								@User?.Identity?.Name
 							</div>
 
 							<a class="btn me-3 bg-light text-dark"

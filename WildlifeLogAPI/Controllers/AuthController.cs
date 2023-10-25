@@ -6,24 +6,24 @@ using WildlifeLogAPI.Repositories;
 
 namespace WildlifeLogAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
-    {
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly ITokenRepository tokenRepository;
+	[Route("api/[controller]")]
+	[ApiController]
+	public class AuthController : ControllerBase
+	{
+		private readonly UserManager<IdentityUser> userManager;
+		private readonly ITokenRepository tokenRepository;
 		private readonly SignInManager<IdentityUser> signInManager;
 
 		public AuthController(UserManager<IdentityUser> userManager,
-            ITokenRepository tokenRepository,
+			ITokenRepository tokenRepository,
 			SignInManager<IdentityUser> signInManager)
-        {
-            this.userManager = userManager;
-            this.tokenRepository = tokenRepository;
+		{
+			this.userManager = userManager;
+			this.tokenRepository = tokenRepository;
 			this.signInManager = signInManager;
 		}
-			
-         
+
+
 		//POST: api/Auth/Register
 		[HttpPost]
 		[Route("Register")]
@@ -44,15 +44,15 @@ namespace WildlifeLogAPI.Controllers
 			//check to see if the user was successfully created 
 			if (identityResult.Succeeded)
 			{
-                //Add the User Role by default when they register
+				//Add the User Role by default when they register
 				var roleIdentityResult = await userManager.AddToRoleAsync(identityUser, "User");
 
-					//check if the userrole was successfully added, if so display message
-					if (roleIdentityResult.Succeeded)
-					{
-						return Ok("User was registered. Please login.");
-					}
-				
+				//check if the userrole was successfully added, if so display message
+				if (roleIdentityResult.Succeeded)
+				{
+					return Ok("User was registered. Please login.");
+				}
+
 			}
 			//if it didnt suceed 
 			return BadRequest("something went wrong. Please try again. ");
@@ -62,55 +62,58 @@ namespace WildlifeLogAPI.Controllers
 
 		//POST: api/auth/login 
 		[HttpPost]
-        [Route("Login")]
-        public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)
-        {
-          var user = await userManager.FindByEmailAsync(loginRequestDto.Email);
+		[Route("Login")]
+		public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)
+		{
 
-            //check if the email is assciated with a user
-            //if it is filled in and we find it in the database then do the code required to log in 
-            if(user != null) 
-            {
-                //check that password matches the email using built in CheckPasswordAsync
-                //pass in the email and password
-                var checkPasswordResult = await userManager.CheckPasswordAsync(user, loginRequestDto.Password);
-
-                //if the password matches the email, then create a token 
-                if (checkPasswordResult)
-                {
-                    //Create token here 
-                    //Get roles for this user 
-                    var roles = await userManager.GetRolesAsync(user);
+			//get the user by their email and store the user in the user variable
+			var user = await userManager.FindByEmailAsync(loginRequestDto.Email);
 
 
-                    //if there are roles then create the token 
-                    if (roles != null)
-                    {
-                        //create jwt token
-                        var jwtToken = tokenRepository.CreateJWTToken(user, roles.ToList()); //this is our token 
+			  //check if the email is assciated with a user
+			  //if it is filled in and we find it in the database then do the code required to log in 
+			  if(user != null) 
+			  {
+				  //check that password matches the email using built in CheckPasswordAsync
+				  //pass in the email and password
+				  var checkPasswordResult = await userManager.CheckPasswordAsync(user, loginRequestDto.Password);
 
-                        //put that token into a dto 
-                        var response = new LoginResponseDto
-                        {
-                            JwtToken = jwtToken
-                        };
+				  //if the password matches the email, then create a token 
+				  if (checkPasswordResult)
+				  {
+					  //Create token here 
+					  //Get roles for this user 
+					  var roles = await userManager.GetRolesAsync(user);
 
-                        return Ok(jwtToken);
-                    }
-  
 
-                }
-            }
+					  //if there are roles then create the token 
+					  if (roles != null)
+					  {
+						  //create jwt token
+						  var jwtToken = tokenRepository.CreateJWTToken(user, roles.ToList()); //this is our token 
 
-            return BadRequest("Username or password is incorect");
-        }
+						  //put that token into a dto 
+						  var response = new LoginResponseDto
+						  {
+							  JwtToken = jwtToken
+						  };
 
-        [HttpPost]
-        [Route("Logout")]
-        public async Task<IActionResult> Logout()
-        {
-			await signInManager.SignOutAsync();
-            return Ok("User logged out.");
+						  return Ok(jwtToken);
+					  }
+
+
+				  }
+			  }
+
+			  return BadRequest("Username or password is incorect");
 		}
-    }
+
+		[HttpPost]
+		[Route("Logout")]
+		public async Task<IActionResult> Logout()
+		{
+			await signInManager.SignOutAsync();
+			return Ok("User logged out.");
+		}
+	}
 }
