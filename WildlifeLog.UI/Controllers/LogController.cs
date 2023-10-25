@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Text;
 using WildlifeLog.UI.Models.DTO;
+using WildlifeLog.UI.Models.ViewModels;
 
 namespace WildlifeLog.UI.Controllers
 {
@@ -42,5 +45,46 @@ namespace WildlifeLog.UI.Controllers
 			return View(logs);
 		}
 
-	}
+        [HttpGet]
+        public IActionResult Add()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Add(AddLogViewModel addLogViewModel)
+        {
+            //Create client 
+            var client = httpClientFactory.CreateClient();
+
+            //create httpRequestMessage object
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri("https://localhost:7075/api/logs"),
+                Content = new StringContent(JsonSerializer.Serialize(addLogViewModel), Encoding.UTF8, "application/json")
+            };
+
+
+            //Use the client to sent the httt request message to the api 
+            var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+
+            //Make sure it's a success 
+            httpResponseMessage.EnsureSuccessStatusCode();
+
+            //convert json response to Region Dto object 
+            var response = await httpResponseMessage.Content.ReadFromJsonAsync<LogDto>();
+
+            //if sucessful redirect to 
+            if (response is not null)
+            {
+                return RedirectToAction("Index", "Logs");
+            }
+
+            //otherwise return view 
+            return View();
+        }
+
+
+    }
 }
