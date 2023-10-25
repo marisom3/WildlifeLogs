@@ -72,6 +72,9 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("WildlifeLogAuthC
 builder.Services.AddScoped<IParkRepository, ParkRepository>();
 builder.Services.AddScoped<ILogRepository, LogRepository>();
 
+//Inject CategoryRepository
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
 //Inject IToken Repository 
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
