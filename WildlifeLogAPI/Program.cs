@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.FileProviders;
 using Serilog;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,14 +82,14 @@ builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 //Inject Identity 
-builder.Services.AddIdentityCore<IdentityUser>()
-    .AddRoles<IdentityRole>()
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("WildlifeLog")
     .AddEntityFrameworkStores<WildlifeLogAuthDbContext>()
     .AddDefaultTokenProviders();
 
-//Add Identity Options (password requirements?)
 
+
+//Add Identity Options (password requirements?)
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = false;

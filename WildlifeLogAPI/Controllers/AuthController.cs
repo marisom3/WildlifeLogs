@@ -14,14 +14,15 @@ namespace WildlifeLogAPI.Controllers
         private readonly ITokenRepository tokenRepository;
 		private readonly SignInManager<IdentityUser> signInManager;
 
-		public AuthController(UserManager<IdentityUser> userManager, 
-            ITokenRepository tokenRepository, 
-            SignInManager<IdentityUser> signInManager)
+		public AuthController(UserManager<IdentityUser> userManager,
+            ITokenRepository tokenRepository,
+			SignInManager<IdentityUser> signInManager)
         {
             this.userManager = userManager;
             this.tokenRepository = tokenRepository;
 			this.signInManager = signInManager;
 		}
+			
          
 		//POST: api/Auth/Register
 		[HttpPost]
@@ -104,12 +105,12 @@ namespace WildlifeLogAPI.Controllers
             return BadRequest("Username or password is incorect");
         }
 
-
-        [HttpGet]
+        [HttpPost]
+        [Route("Logout")]
         public async Task<IActionResult> Logout()
         {
-            await signInManager.SignOutAsync();
-
-        }
+			await signInManager.SignOutAsync();
+            return Ok("User logged out.");
+		}
     }
 }
