@@ -85,6 +85,76 @@ namespace WildlifeLog.UI.Controllers
             return View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var client =httpClientFactory.CreateClient();
 
-    }
+            var repsonse= await client.GetFromJsonAsync<LogDto>($"https://localhost:7075/api/logs/{id.ToString()}");
+
+            if (repsonse is not null)
+            {
+                return View(repsonse);
+
+            }
+
+            return View();
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Edit(LogDto request)
+		{
+			//create client 
+			var client = httpClientFactory.CreateClient();
+
+			//create httpRequestMessage 
+			var httpRequestMessage = new HttpRequestMessage()
+			{
+				Method = HttpMethod.Put,
+				RequestUri = new Uri($"https://localhost:7075/api/log/{request.Id}"),
+				Content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json")
+			};
+
+			//Send request through client 
+			var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+
+			//Ensure Sucess
+			httpResponseMessage.EnsureSuccessStatusCode();
+
+			//convert the response coming back form the api from json to Region Dto 
+			var response = await httpResponseMessage.Content.ReadFromJsonAsync<LogDto>();
+
+			//if succesful then redirect to the dit page 
+			if (response != null)
+			{
+				return RedirectToAction("Index", "Log");
+
+			}
+
+			return View();
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Delete(LogDto request)
+		{
+			try
+			{
+				var client = httpClientFactory.CreateClient();
+
+				var httpResponseMessage = await client.DeleteAsync($"https://localhost:7075/api/log/{request.Id}");
+
+				httpResponseMessage.EnsureSuccessStatusCode();
+
+				return RedirectToAction("Index", "Log");
+			}
+			catch (Exception ex)
+			{
+				// Console
+
+			}
+
+			return View("Edit");
+		}
+
+	}
 }
