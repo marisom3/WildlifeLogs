@@ -46,9 +46,31 @@ namespace WildlifeLog.UI.Controllers
 		}
 
         [HttpGet]
-        public IActionResult Add()
+        public async Task<IActionResult> Add()
         {
-            return View();
+			//Create client 
+			var client = httpClientFactory.CreateClient();
+
+			//Fetch the list of parks and categories 
+			var parksResponse = await client.GetAsync("https://localhost:7075/api/parks");
+			var categoriesResponse = await client.GetAsync("https://localhost:7075/api/categories");
+
+			// Ensure success for both requests
+			parksResponse.EnsureSuccessStatusCode();
+			categoriesResponse.EnsureSuccessStatusCode();
+
+			// Convert JSON responses to lists of ParkDto and CategoryDto
+			var parks = await parksResponse.Content.ReadFromJsonAsync<List<ParkDto>>();
+			var categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryDto>>();
+
+			// Create a view model that includes the list of parks and categories
+			var viewModel = new AddLogViewModel
+			{
+				Parks = parks,
+				Categories = categories
+			};
+
+			return View(viewModel);
         }
 
         [HttpPost]
@@ -57,14 +79,14 @@ namespace WildlifeLog.UI.Controllers
             //Create client 
             var client = httpClientFactory.CreateClient();
 
-            //create httpRequestMessage object
-            var httpRequestMessage = new HttpRequestMessage()
+
+			//create httpRequestMessage object
+			var httpRequestMessage = new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri("https://localhost:7075/api/logs"),
                 Content = new StringContent(JsonSerializer.Serialize(addLogViewModel), Encoding.UTF8, "application/json")
             };
-
 
             //Use the client to sent the httt request message to the api 
             var httpResponseMessage = await client.SendAsync(httpRequestMessage);
@@ -155,6 +177,8 @@ namespace WildlifeLog.UI.Controllers
 
 			return View("Edit");
 		}
+
+		
 
 	}
 }

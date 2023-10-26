@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WildlifeLog.UI.Models.DTO;
 
 namespace WildlifeLog.UI.Models.ViewModels
 {
@@ -40,5 +41,8 @@ namespace WildlifeLog.UI.Models.ViewModels
 
         [Required]
         public Guid ParkId { get; set; }
-    }
+
+		public List<ParkDto> Parks { get; set; }
+		public List<CategoryDto> Categories { get; set; }
+	}
 }
