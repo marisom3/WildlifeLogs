@@ -84,7 +84,7 @@ namespace WildlifeLog.UI.Controllers
 			var httpRequestMessage = new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri("https://localhost:7075/api/logs"),
+                RequestUri = new Uri("https://localhost:7075/api/log"),
                 Content = new StringContent(JsonSerializer.Serialize(addLogViewModel), Encoding.UTF8, "application/json")
             };
 

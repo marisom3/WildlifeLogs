@@ -39,6 +39,9 @@ namespace WildlifeLogAPI.Models.DTO
 
         [Required]
         public Guid ParkId { get; set; }
- 
-    }
+
+		public List<ParkDto> Parks { get; set; }
+		public List<CategoryDto> Categories { get; set; }
+
+	}
 }
