@@ -111,10 +111,14 @@ namespace WildlifeLog.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var client =httpClientFactory.CreateClient();
+			//create client 
+            var client = httpClientFactory.CreateClient();
 
-            var repsonse= await client.GetFromJsonAsync<LogDto>($"https://localhost:7075/api/logs/{id.ToString()}");
+			//use client to get the log data from the api 
+            var repsonse= await client.GetFromJsonAsync<LogDto>($"https://localhost:7075/api/log/{id.ToString()}");
 
+
+			//if you get something by the id, then return it to the view
             if (repsonse is not null)
             {
                 return View(repsonse);
@@ -150,7 +154,7 @@ namespace WildlifeLog.UI.Controllers
 			//if succesful then redirect to the dit page 
 			if (response != null)
 			{
-				return RedirectToAction("Index", "Log");
+				return RedirectToAction("Index", "Logs");
 
 			}
 
@@ -168,7 +172,7 @@ namespace WildlifeLog.UI.Controllers
 
 				httpResponseMessage.EnsureSuccessStatusCode();
 
-				return RedirectToAction("Index", "Log");
+				return RedirectToAction("Index", "Logs");
 			}
 			catch (Exception ex)
 			{

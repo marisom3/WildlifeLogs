@@ -35,7 +35,11 @@ namespace WildlifeLogAPI.Models.DTO
 		[MaxLength(500)]
 		public string Comments { get; set; }
 
-		public List<ParkDto> Parks { get; set; }
-		public List<CategoryDto> Categories { get; set; }
+		public Guid CategoryId { get; set; }
+
+		public Guid ParkId { get; set; }
+
+		public List<ParkDto>? Parks { get; set; }
+		public List<CategoryDto>? Categories { get; set; }
 	}
 }

@@ -8,6 +8,7 @@
 <h1 class="mt-3">Add Your Wildlife Observation</h1>
 
 <form method="post">
+
 	<div class="mt-3">
 		<label class="form-label">Observer Name</label>
 		<input type="text" class="form-control" asp-for="ObserverName" />
@@ -21,8 +22,8 @@
 		@foreach (var category in Model.Categories)
 		{
 			<div>
-				<input type="radio" asp-for="Categories" value="@category.Id" />
-				<label>@category.Name</label>
+				<input type="radio" asp-for="CategoryId" value="@category.Id" id="@category.Id" />
+				<label for="@category.Id">@category.Name</label>
 			</div>
 		}
 	</div>
@@ -51,7 +52,7 @@
 	</div>
 	<div class="mt-3">
 		<label class="form-label">Which park?</label>
-		<select asp-for="Parks" class="form-control">
+		<select asp-for="ParkId" class="form-control">
 			<option value="">Select a Park</option>
 			@foreach (var park in Model.Parks)
 			{
@@ -69,6 +70,7 @@
 		<label class="form-label">Comments</label>
 		<input type="text" class="form-control" asp-for="Comments" />
 	</div>
+
 
 	<div class="mt-3">
 		<button type="submit" class="btn btn-primary">Save</button>

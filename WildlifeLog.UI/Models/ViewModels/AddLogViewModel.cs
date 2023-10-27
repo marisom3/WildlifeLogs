@@ -17,7 +17,6 @@ namespace WildlifeLog.UI.Models.ViewModels
         [Required]
         public bool Confidence { get; set; }
 
-
         public string? Species { get; set; }
 
         [Required]
@@ -35,10 +34,12 @@ namespace WildlifeLog.UI.Models.ViewModels
         [Required]
         [MaxLength(500)]
         public string Comments { get; set; }
+ 
+        public Guid CategoryId { get; set; }
 
-   
+        public Guid ParkId { get; set; }
 
-		public List<ParkDto> Parks { get; set; }
-		public List<CategoryDto> Categories { get; set; }
+		public List<ParkDto>? Parks { get; set; }
+		public List<CategoryDto>? Categories { get; set; }
 	}
 }

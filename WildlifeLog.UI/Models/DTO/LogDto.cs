@@ -17,7 +17,7 @@
         public ParkDto Park { get; set; }
         public CategoryDto Category { get; set; }
 
-		public List<ParkDto> Parks { get; set; }
-		public List<CategoryDto> Categories { get; set; }
+		public List<ParkDto>? Parks { get; set; }
+		public List<CategoryDto>? Categories { get; set; }
 	}
 }
