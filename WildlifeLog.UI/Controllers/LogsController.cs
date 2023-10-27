@@ -6,11 +6,11 @@ using WildlifeLog.UI.Models.ViewModels;
 
 namespace WildlifeLog.UI.Controllers
 {
-	public class LogController : Controller
+	public class LogsController : Controller
 	{
 		private readonly IHttpClientFactory httpClientFactory;
 
-		public LogController(IHttpClientFactory httpClientFactory)
+		public LogsController(IHttpClientFactory httpClientFactory)
 		{
 			this.httpClientFactory = httpClientFactory;
 		}
@@ -74,6 +74,7 @@ namespace WildlifeLog.UI.Controllers
         }
 
         [HttpPost]
+		
         public async Task<IActionResult> Add(AddLogViewModel addLogViewModel)
         {
             //Create client 

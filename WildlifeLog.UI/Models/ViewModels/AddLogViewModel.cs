@@ -36,11 +36,7 @@ namespace WildlifeLog.UI.Models.ViewModels
         [MaxLength(500)]
         public string Comments { get; set; }
 
-        [Required]
-        public Guid CategoryId { get; set; }
-
-        [Required]
-        public Guid ParkId { get; set; }
+   
 
 		public List<ParkDto> Parks { get; set; }
 		public List<CategoryDto> Categories { get; set; }
