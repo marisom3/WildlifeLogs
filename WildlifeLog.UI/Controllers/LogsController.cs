@@ -19,7 +19,7 @@ namespace WildlifeLog.UI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Index()
 		{
-			//create list of type ParkDto 
+			//create list of type LogDto
 			List<LogDto> logs = new List<LogDto>();
 
 			try

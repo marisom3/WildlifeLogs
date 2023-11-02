@@ -18,5 +18,6 @@
         public ParkDto Park { get; set; }
         public CategoryDto Category { get; set; }
 
+
 	}
 }

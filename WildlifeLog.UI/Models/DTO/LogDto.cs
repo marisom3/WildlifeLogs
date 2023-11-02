@@ -13,11 +13,13 @@
         public string? LogImageUrl { get; set; }
         public string Comments { get; set; }
 
-
-        public ParkDto Park { get; set; }
-        public CategoryDto Category { get; set; }
+		public ParkDto? Park { get; set; }
+        public CategoryDto? Category { get; set; }
 
 		public List<ParkDto>? Parks { get; set; }
 		public List<CategoryDto>? Categories { get; set; }
+
+		public Guid? CategoryId { get; set; }
+		public Guid? ParkId { get; set; }
 	}
 }
