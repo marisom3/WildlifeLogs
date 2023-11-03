@@ -1,4 +1,4 @@
-﻿@model WildlifeLog.UI.Models.DTO.LogDto
+﻿@model WildlifeLog.UI.Models.ViewModels.UpdateLogViewModel
 @using WildlifeLogAPI.Models.DomainModels;
 @using Microsoft.AspNetCore.Mvc.Rendering
 
@@ -25,11 +25,12 @@
 			@foreach (var category in Model.Categories)
 			{
 				<div>
-					<input type="radio" asp-for="CategoryId" value="@category.Id" id="@category.Id" />
-					<label for="@category.Id">@category.Name</label>
+					<input type="radio" asp-for="CategoryId" value="@category.Id" id="categoryId_@category.Id" />
+					<label for="categoryId_@category.Id">@category.Name</label>
 				</div>
 			}
 		</div>
+
 
 		<div class="mt-3">
 
@@ -59,7 +60,7 @@
 				<option value="">Select a Park</option>
 				@foreach (var park in Model.Parks)
 				{
-					<option value="@park.Id">@park.Name</option>
+					<option value="@park.Id" selected="@(park.Id == Model.ParkId ? "selected" : null)">@park.Name</option>
 				}
 			</select>
 		</div>

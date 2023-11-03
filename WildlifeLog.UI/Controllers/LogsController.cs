@@ -115,17 +115,45 @@ namespace WildlifeLog.UI.Controllers
             var client = httpClientFactory.CreateClient();
 
 			//use client to get the log data from the api 
-            var repsonse= await client.GetFromJsonAsync<LogDto>($"https://localhost:7075/api/log/{id.ToString()}");
+            var log = await client.GetFromJsonAsync<LogDto>($"https://localhost:7075/api/log/{id.ToString()}");
 
 
 			//if you get something by the id, then return it to the view
-            if (repsonse is not null)
+            if (log is null)
             {
-                return View(repsonse);
+                return View();
 
             }
 
-            return View();
+            // Fetch the lists of parks and categories just like in your Add method
+            var parksResponse = await client.GetAsync("https://localhost:7075/api/parks");
+            var categoriesResponse = await client.GetAsync("https://localhost:7075/api/categories");
+
+            parksResponse.EnsureSuccessStatusCode();
+            categoriesResponse.EnsureSuccessStatusCode();
+
+            var parks = await parksResponse.Content.ReadFromJsonAsync<List<ParkDto>>();
+            var categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryDto>>();
+
+            var viewModel = new UpdateLogViewModel
+            {
+				ObserverName = log.ObserverName,
+				Date = log.Date,
+				Confidence = log.Confidence,
+				Species = log.Species,
+				Count = log.Count,
+				Description = log.Description,
+				Location = log.Location,
+				LogImageUrl = log.LogImageUrl,
+				Comments = log.Comments,
+				CategoryId = log.CategoryId,
+				ParkId = log.ParkId,
+				Parks = parks,
+				Categories = categories
+			};
+
+            return View(viewModel);
+
 		}
 
 		[HttpPost]
