@@ -6,7 +6,8 @@ namespace WildlifeLog.UI.Models.ViewModels
 {
     public class UpdateLogViewModel
     {
-
+        public Guid Id { get; set; }
+         
         [Required]
         [MaxLength(100)]
         public string ObserverName { get; set; }

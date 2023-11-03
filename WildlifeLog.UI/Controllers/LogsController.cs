@@ -189,6 +189,7 @@ namespace WildlifeLog.UI.Controllers
 			return View();
 		}
 
+
 		[HttpPost]
 		public async Task<IActionResult> Delete(LogDto request)
 		{
