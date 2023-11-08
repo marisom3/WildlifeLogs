@@ -11,7 +11,7 @@ namespace WildlifeLogAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
+    [Authorize(Roles = "Admin")]
 
 
     public class ParksController : ControllerBase
@@ -29,10 +29,6 @@ namespace WildlifeLogAPI.Controllers
 
         //GET all parks: localhost/api/parks
         [HttpGet]
-        [Authorize(Roles = "Admin")]
-
-
-
         public async Task<IActionResult> GetAll()
         {
             //Get list from database using repository, return domain model 

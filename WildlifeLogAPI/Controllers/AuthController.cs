@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WildlifeLogAPI.Models.DTO;
@@ -105,19 +106,31 @@ namespace WildlifeLogAPI.Controllers
                         return Ok(response);
                     }
 
-
                 }
             }
 
             return BadRequest("Username or password is incorect");
         }
 
-        //[HttpPost]
-        //[Route("Logout")]
-        //public async Task<IActionResult> Logout()
-        //{
-        //    await signInManager.SignOutAsync();
-        //    return Ok("User logged out.");
-        //}
+        /*[HttpPost]
+        [Route("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+
+            //get the user thats logged in?
+            var user = await userManager.GetUserAsync(User);
+
+            if (user != null)
+            {
+                // Sign out the user by clearing authentication cookies.
+                await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+
+                // Optionally, you can return a message indicating successful logout.
+                return Ok("User logged out.");
+            }
+
+            // Handle the case where the user is not found.
+            return BadRequest("User not found."); 
+        }*/
     }
 }
