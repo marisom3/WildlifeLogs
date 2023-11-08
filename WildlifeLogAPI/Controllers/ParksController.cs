@@ -13,6 +13,7 @@ namespace WildlifeLogAPI.Controllers
     [ApiController]
     
 
+
     public class ParksController : ControllerBase
     {
         private readonly IParkRepository parkRepository;
@@ -29,6 +30,8 @@ namespace WildlifeLogAPI.Controllers
         //GET all parks: localhost/api/parks
         [HttpGet]
         [Authorize(Roles = "Admin")]
+
+
 
         public async Task<IActionResult> GetAll()
         {
@@ -48,7 +51,7 @@ namespace WildlifeLogAPI.Controllers
         //GET park by id: localhost/api/parks/{id}
         [HttpGet]
         [Route("{id:Guid}")]
-        [Authorize (Roles ="Admin")]
+
 
         public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
         {
@@ -72,7 +75,7 @@ namespace WildlifeLogAPI.Controllers
 
         //POST - create park: localhost/api/parks
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> CreateAsync([FromBody] AddParkRequestDto addParkRequestDto)
         {
             if (ModelState.IsValid)
@@ -100,7 +103,7 @@ namespace WildlifeLogAPI.Controllers
         //PUT - UUpdate a park 
         [HttpPut]
         [Route("{id:guid}")]
-        [Authorize(Roles = "Admin")]
+   
         public async Task<IActionResult> UpdateAsync([FromRoute] Guid id, [FromBody] UpdateParkRequestDto updateParkRequestDto)
         {
             if (ModelState.IsValid)
@@ -130,7 +133,7 @@ namespace WildlifeLogAPI.Controllers
 
         [HttpDelete]
         [Route("{id:Guid}")]
-        [Authorize(Roles = "Admin")]
+   
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             //use repository to get delete the park by id 

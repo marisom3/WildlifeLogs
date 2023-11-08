@@ -12,21 +12,22 @@ namespace WildlifeLogAPI.Controllers
     {
         private readonly UserManager<IdentityUser> userManager;
         private readonly ITokenRepository tokenRepository;
-        private readonly SignInManager<IdentityUser> signInManager;
+        //private readonly SignInManager<IdentityUser> signInManager;
 
         public AuthController(UserManager<IdentityUser> userManager,
-            ITokenRepository tokenRepository,
-            SignInManager<IdentityUser> signInManager)
+            ITokenRepository tokenRepository)
+            //,SignInManager<IdentityUser> signInManager)
         {
             this.userManager = userManager;
             this.tokenRepository = tokenRepository;
-            this.signInManager = signInManager;
+            //this.signInManager = signInManager;
         }
 
 
         //POST: api/Auth/Register
         [HttpPost]
         [Route("Register")]
+
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequestDto)
         {
             //create a new instance of IdetityUser (which includes the username and email they sumbmit)
@@ -66,7 +67,7 @@ namespace WildlifeLogAPI.Controllers
         //POST: api/auth/login 
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
         {
 
             //get the user by their email and store the user in the user variable
@@ -101,7 +102,7 @@ namespace WildlifeLogAPI.Controllers
                             JwtToken = jwtToken
                         };
 
-                        return Ok(jwtToken);
+                        return Ok(response);
                     }
 
 
@@ -111,12 +112,12 @@ namespace WildlifeLogAPI.Controllers
             return BadRequest("Username or password is incorect");
         }
 
-        [HttpPost]
-        [Route("Logout")]
-        public async Task<IActionResult> Logout()
-        {
-            await signInManager.SignOutAsync();
-            return Ok("User logged out.");
-        }
+        //[HttpPost]
+        //[Route("Logout")]
+        //public async Task<IActionResult> Logout()
+        //{
+        //    await signInManager.SignOutAsync();
+        //    return Ok("User logged out.");
+        //}
     }
 }

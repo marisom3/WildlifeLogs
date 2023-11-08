@@ -85,7 +85,8 @@ builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 //Inject Identity 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentityCore<IdentityUser>()
+    .AddRoles<IdentityRole>()
     .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("WildlifeLog")
     .AddEntityFrameworkStores<WildlifeLogAuthDbContext>()
     .AddDefaultTokenProviders();
