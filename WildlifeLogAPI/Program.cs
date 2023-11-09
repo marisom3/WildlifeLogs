@@ -60,6 +60,7 @@ builder.Services.AddSwaggerGen(options =>
 
 });
 
+
 //Inject DbContext 
 builder.Services.AddDbContext<WildlifeLogDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("WildlifeLogConnectionString")));

@@ -1,15 +1,16 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc; 
+using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using System.Text.Json;
 using WildlifeLog.UI.Models.DTO;
 using WildlifeLog.UI.Models.ViewModels;
+using WildlifeLogAPI.Models.DTO;
 
 namespace WildlifeLog.UI.Controllers
 {
-	public class AuthsController : Controller
-	{
+    public class AuthsController : Controller
+    {
         private readonly IHttpClientFactory httpClientFactory;
 
         public AuthsController(IHttpClientFactory httpClientFactory)
@@ -18,16 +19,16 @@ namespace WildlifeLog.UI.Controllers
         }
 
         [HttpGet]
-		public IActionResult Register()
-		{
-			return View();
-		}
+        public IActionResult Register()
+        {
+            return View();
+        }
 
-		[HttpPost]
-		public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
-		{
-			//Created client 
-			var client = httpClientFactory.CreateClient();
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
+        {
+            //Created client 
+            var client = httpClientFactory.CreateClient();
 
             //create httpRequestMessage
             var httpRequestMessage = new HttpRequestMessage()
@@ -35,105 +36,86 @@ namespace WildlifeLog.UI.Controllers
                 Method = HttpMethod.Post,
                 RequestUri = new Uri("https://localhost:7075/api/auth/register"),
                 Content = new StringContent(JsonSerializer.Serialize(registerViewModel), Encoding.UTF8, "application/json")
-            }; 
-	
+            };
 
-			//use cleint to send httpRequestMessage to api and we get a json response abck 
-			var httpResponseMessage = await client.SendAsync(httpRequestMessage);
 
-			//Ensure success 
-			httpResponseMessage.EnsureSuccessStatusCode();
+            //use cleint to send httpRequestMessage to api and we get a json response abck 
+            var httpResponseMessage = await client.SendAsync(httpRequestMessage);
 
-			//"Read the body" as as tring DONT Convert form JSON to Dto 
-			var response = await httpResponseMessage.Content.ReadAsStringAsync();
+            //Ensure success 
+            httpResponseMessage.EnsureSuccessStatusCode();
+
+            //"Read the body" as as tring DONT Convert form JSON to Dto 
+            var response = await httpResponseMessage.Content.ReadAsStringAsync();
 
             //If successful, redirect to ? 
             if (response != null)
-			{
-				return RedirectToAction("Index", "Home");
-			}
+            {
+                return RedirectToAction("Index", "Home");
+            }
 
-			//else just return to view 
-			return View();
-	
-
-		}
-
-		 
-		[HttpGet]
-		public IActionResult Login()
-		{
-			return View();
-		}
-
-		[HttpPost]
-		public async Task<IActionResult> Login(LoginViewModel loginViewModel)
-		{
-			var client = httpClientFactory.CreateClient();
+            //else just return to view 
+            return View();
 
 
-			//create httpRequestMessage
-			var httpRequestMessage = new HttpRequestMessage()
-			{
-				Method = HttpMethod.Post,
-				RequestUri = new Uri("https://localhost:7075/api/auth/login"),
-				Content = new StringContent(JsonSerializer.Serialize(loginViewModel), Encoding.UTF8, "application/json")
-			};
+        }
 
 
-			//use cleint to send httpRequestMessage to api and we get a json response abck 
-			var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
 
-			//Ensure success 
-			httpResponseMessage.EnsureSuccessStatusCode();
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel loginViewModel)
+        {
 
-			//"Read the body" as as tring DONT Convert form JSON to Dto 
-			var response = await httpResponseMessage.Content.ReadAsStringAsync();
-
-			//If successful, redirect to ? 
-			if (response != null)
-			{
-				return RedirectToAction("Index", "Home");
-			}
-
-			//else just return to view 
-			return View();
-		}
-
-		[HttpPost]
-		public async Task<IActionResult> Logout()
-		{
-			var client = httpClientFactory.CreateClient();
+            //create the client 
+            var client = httpClientFactory.CreateClient();
 
 
-			//create httpRequestMessage
-			var httpRequestMessage = new HttpRequestMessage()
-			{
-				Method = HttpMethod.Post,
-				RequestUri = new Uri("https://localhost:7075/api/auth/logout"),
-				
-			};
+            //create httpRequestMessage
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri("https://localhost:7075/api/auth/login"),
+                Content = new StringContent(JsonSerializer.Serialize(loginViewModel), Encoding.UTF8, "application/json")
+            };
+
+            try
+            {
+                //use cleint to send httpRequestMessage to api and we get a json response abck 
+                var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+
+                //Ensure success 
+                httpResponseMessage.EnsureSuccessStatusCode();
+
+                //"Read the body" as a string
+                var response = await httpResponseMessage.Content.ReadAsStringAsync();
+                
+                // Deserialize the JSON response to a DTO (assuming LoginResponseDto is your DTO class)
+                var loginResponseDto = JsonSerializer.Deserialize<Models.DTO.LoginResponseDto>(response);
+
+                // If successful, store the JWT token (consider using a secure storage method)
+                var jwtToken = loginResponseDto.jwtToken;
+                
+                // You may want to store the token for subsequent requests (e.g., in a secure cookie or session)
+                HttpContext.Session.SetString("JwtToken", jwtToken);
+
+                return RedirectToAction("Index", "Home");
+                
+
+            }
+            catch (HttpRequestException)
+            {
+                // Handle request exception (e.g., log, display error message)
+                return View();
+            }
+
+        }
 
 
-			//use cleint to send httpRequestMessage to api and we get a json response abck 
-			var httpResponseMessage = await client.SendAsync(httpRequestMessage);
 
-			//Ensure success 
-			httpResponseMessage.EnsureSuccessStatusCode();
-
-			//"Read the body" as as tring DONT Convert form JSON to Dto 
-			var response = await httpResponseMessage.Content.ReadAsStringAsync();
-
-			//If successful, redirect to ? 
-			if (response != null)
-			{
-				return RedirectToAction("Index", "Home");
-			}
-
-			//else just return to view 
-			return RedirectToAction("Login");
-		}
-
-		
-	}
+    }
 }

@@ -12,6 +12,18 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 
 
+//Inject Session Configuration 
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    // Configure session options as needed
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+
 //////////////////////////////////////////////////////////
 //Inject dbOCntext 
 builder.Services.AddDbContext<WildlifeLogDbContext>();
@@ -38,7 +50,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-
+app.UseSession();
 app.UseAuthentication();
 
 app.UseAuthorization();

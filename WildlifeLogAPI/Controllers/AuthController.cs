@@ -46,16 +46,13 @@ namespace WildlifeLogAPI.Controllers
             //check to see if the user was successfully created 
             if (identityResult.Succeeded)
             {
-                if (registerRequestDto.Roles != null && registerRequestDto.Roles.Any())
+                //Add the User Role by default when they register
+                var roleIdentityResult = await userManager.AddToRoleAsync(identityUser, "User");
+
+                //check if the userrole was successfully added, if so display message
+                if (roleIdentityResult.Succeeded)
                 {
-                    //assign the roles to teh user 
-                    identityResult = await userManager.AddToRolesAsync(identityUser, registerRequestDto.Roles);
-                  
-                    //check if the userrole was successfully added, if so display message
-                    if (identityResult.Succeeded)
-                    {
-                        return Ok("User was registered. Please login.");
-                    }
+                    return Ok("User was registered. Please login.");
                 }
 
             }
@@ -100,7 +97,7 @@ namespace WildlifeLogAPI.Controllers
                         //put that token into a dto 
                         var response = new LoginResponseDto
                         {
-                            JwtToken = jwtToken
+                            jwtToken = jwtToken
                         };
 
                         return Ok(response);
