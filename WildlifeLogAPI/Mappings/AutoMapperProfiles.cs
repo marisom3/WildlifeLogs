@@ -15,6 +15,7 @@ namespace WildlifeLogAPI.Mappings
             CreateMap<Log, AddLogRequestDto>().ReverseMap();
             CreateMap<CategoryDto, Category>().ReverseMap();
             CreateMap<UpdateLogRequestDto, Log>().ReverseMap();
+            CreateMap<CreateUserRequestDto, User>().ReverseMap();
 
         }
     }

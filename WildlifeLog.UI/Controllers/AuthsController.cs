@@ -1,6 +1,8 @@
 ﻿
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using WildlifeLog.UI.Models.DTO;
@@ -12,10 +14,14 @@ namespace WildlifeLog.UI.Controllers
     public class AuthsController : Controller
     {
         private readonly IHttpClientFactory httpClientFactory;
+        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly SignInManager<IdentityUser> signInManager;
 
-        public AuthsController(IHttpClientFactory httpClientFactory)
+        public AuthsController(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor, SignInManager<IdentityUser> signInManager)
         {
             this.httpClientFactory = httpClientFactory;
+            this.httpContextAccessor = httpContextAccessor;
+            this.signInManager = signInManager;
         }
 
         [HttpGet]
@@ -93,18 +99,32 @@ namespace WildlifeLog.UI.Controllers
 
                 //"Read the body" as a string
                 var response = await httpResponseMessage.Content.ReadAsStringAsync();
-                
+
                 // Deserialize the JSON response to a DTO (assuming LoginResponseDto is your DTO class)
                 var loginResponseDto = JsonSerializer.Deserialize<Models.DTO.LoginResponseDto>(response);
 
                 // If successful, store the JWT token (consider using a secure storage method)
                 var jwtToken = loginResponseDto.jwtToken;
-                
+
                 // You may want to store the token for subsequent requests (e.g., in a secure cookie or session)
                 HttpContext.Session.SetString("JwtToken", jwtToken);
 
+
+                // Sign in the user using SignInManager
+                var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.Email, loginViewModel.Email),
+               
+                }, "custom"));
+
+                // Use SignInAsync to sign in the user
+
+                await HttpContext.SignInAsync(user, new AuthenticationProperties
+                {
+                    IsPersistent = false // You can change this based on your requirements
+                });
                 return RedirectToAction("Index", "Home");
-                
+
 
             }
             catch (HttpRequestException)

@@ -4,6 +4,7 @@ namespace WildlifeLog.UI.Models.ViewModels
 {
 	public class LoginViewModel
 	{
+		
 
 		[Required]
 		[DataType(DataType.EmailAddress)]

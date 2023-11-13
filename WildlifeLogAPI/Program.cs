@@ -82,6 +82,9 @@ builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 //Inject IImageRepository 
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
 
+//Inject IUserRepository 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 //Inject Automapper 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
