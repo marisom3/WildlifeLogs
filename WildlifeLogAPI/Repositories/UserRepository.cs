@@ -1,7 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using WildlifeLogAPI.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using WildlifeLogAPI.Models.DomainModels;
+
+
 
 namespace WildlifeLogAPI.Repositories
 {
@@ -59,13 +64,13 @@ namespace WildlifeLogAPI.Repositories
         //Get all Users
         public async Task<IEnumerable<IdentityUser>> GetAllAsync()
         {
-           return await userManager.Users.ToListAsync();
+           return await userManager.Users.Include(u => u.Roles).ToListAsync();
         }
 
         //Get User By Id
         public async Task<IdentityUser?> GetByIdAsync(Guid id)
         {
-            return await userManager.Users.FirstOrDefaultAsync(x => x.Id == id.ToString());
+            return await userManager.Users.Include(u => u.Roles).FirstOrDefaultAsync(x => x.Id == id.ToString());
         }
 
 
