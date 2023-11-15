@@ -12,7 +12,7 @@ namespace WildlifeLogAPI.Repositories
         Task<IdentityUser?> GetByIdAsync(Guid id);
 
         //create users
-        Task<IdentityResult> CreateAsync(IdentityUser user, string password);
+        Task<IdentityResult> CreateAsync(IdentityUser user, string password, IEnumerable<string> roles);
 
         //update user 
         Task<IdentityUser?> UpdateAsync(Guid id, IdentityUser user, string password, IEnumerable<string> newRoles);

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using WildlifeLogAPI.Models.DomainModels;
 using WildlifeLogAPI.Models.DTO;
 
@@ -15,7 +16,9 @@ namespace WildlifeLogAPI.Mappings
             CreateMap<Log, AddLogRequestDto>().ReverseMap();
             CreateMap<CategoryDto, Category>().ReverseMap();
             CreateMap<UpdateLogRequestDto, Log>().ReverseMap();
-            CreateMap<CreateUserRequestDto, User>().ReverseMap();
+            CreateMap<IdentityUser, CreateUserDto>().ReverseMap();
+            CreateMap<IdentityUser, UserDto>().ReverseMap();
+            CreateMap<IdentityUser, UpdateUserRequestDto>().ReverseMap();
 
         }
     }

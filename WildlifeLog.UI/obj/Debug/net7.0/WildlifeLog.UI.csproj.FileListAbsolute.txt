@@ -78,7 +78,6 @@ C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.AssemblyInfoInputs.cache
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.AssemblyInfo.cs
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.csproj.CoreCompileInputs.cache
-C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.RazorAssemblyInfo.cache
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.RazorAssemblyInfo.cs

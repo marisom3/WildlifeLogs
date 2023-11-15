@@ -131,11 +131,11 @@ namespace WildlifeLogAPI.Controllers
             }
 
             //convert from dm to dto 
-            mapper.Map<LogDto>(log);
+            var logDto = mapper.Map<LogDto>(log);
 
 
             //return to client
-            return Ok(log);
+            return Ok(logDto);
         }
     }
 }

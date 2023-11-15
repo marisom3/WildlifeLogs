@@ -9,7 +9,7 @@ namespace WildlifeLogAPI.Repositories
     {
         private readonly UserManager<IdentityUser> userManager;
 
-        //Inject Auth DbContext 
+        //Inject userManager 
         public UserRepository(UserManager<IdentityUser> userManager)
         {
             this.userManager = userManager;
@@ -17,10 +17,21 @@ namespace WildlifeLogAPI.Repositories
 
 
         //Create a user 
-        public async Task<IdentityResult> CreateAsync(IdentityUser user, string password)
+        public async Task<IdentityResult> CreateAsync(IdentityUser user, string password, IEnumerable<string> roles)
         {
-          return await userManager.CreateAsync(user, password);
-           
+            //Create the user with IdentityUser and the password 
+          var result = await userManager.CreateAsync(user, password);
+
+
+            //If it worked, then add the roles if any 
+            if (result.Succeeded && roles != null)
+            {
+                // Assign roles to the user
+                await userManager.AddToRolesAsync(user, roles);
+            }
+
+            return result;
+
         }
 
         //Delete User by Id
