@@ -16,7 +16,7 @@ namespace WildlifeLogAPI.Repositories
         Task<IdentityResult> CreateAsync(IdentityUser user, string password, IEnumerable<string> roles);
 
         //update user 
-        Task<IdentityUser?> UpdateAsync(Guid id, IdentityUser user, string password, IEnumerable<string> newRoles);
+        Task<IdentityUser?> UpdateAsync(Guid id, IdentityUser user, IEnumerable<string> newRoles);
 
         //delete user 
         Task<IdentityUser?> DeleteAsync(Guid id);

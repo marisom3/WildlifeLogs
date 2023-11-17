@@ -1,9 +1,11 @@
 ﻿using Azure;
+using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using System.Text.Json;
 using WildlifeLog.UI.Models.DTO;
 using WildlifeLog.UI.Models.ViewModels;
+
 
 
 namespace WildlifeLog.UI.Controllers
@@ -94,6 +96,95 @@ namespace WildlifeLog.UI.Controllers
             //otherwise return view 
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult>Edit(Guid id)
+        {
+            //create client 
+            var client = httpClientFactory.CreateClient();
+
+            //use client to get the data from teh api
+            //we send it to that url and include the id 
+            //also we convert the response from JSON to User Dto 
+            var response = await client.GetFromJsonAsync<UpdateUserDto>($"https://localhost:7075/api/Users/{id.ToString()}");
+
+            //if the response is not null aka we were able to grab the park by its id,
+            //return it to the view 
+            if (response != null)
+            {
+                return View(response);
+            }
+
+            //otherwise just retun to the view 
+            return View();
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit (UpdateUserDto updateUserDto)
+        {
+            //create client 
+            var client = httpClientFactory.CreateClient();
+			
+            // Initialize Roles to an empty list if it's null
+			if (updateUserDto.Roles == null)
+			{
+				updateUserDto.Roles = new List<string>();
+			}
+
+			// Set the default role to "User" if the "Admin" checkbox is not checked
+			if (!updateUserDto.Roles.Contains("Admin"))
+			{
+				updateUserDto.Roles = new List<string> { "User" };
+			}
+
+			//create httpRequestMessage 
+			var httpRequestMessage = new HttpRequestMessage()
+			{
+				Method = HttpMethod.Put,
+				RequestUri = new Uri($"https://localhost:7075/api/Users/{updateUserDto.Id}"),
+				Content = new StringContent(JsonSerializer.Serialize(updateUserDto), Encoding.UTF8, "application/json")
+			};
+
+            //use client to send teh reuest to teh api 
+            var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+
+            //Ensure success 
+            httpResponseMessage.EnsureSuccessStatusCode();
+
+            //convert teh repsonse coming back from the API from Json to UserDto 
+            var response = await httpResponseMessage.Content.ReadFromJsonAsync<UsersDto>();
+
+            if (response is not null)
+            {
+                return RedirectToAction("Index", "AdminUsers");
+            }
+
+			return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete (Guid id)
+        {
+			try
+			{
+				var client = httpClientFactory.CreateClient();
+
+				var httpResponseMessage = await client.DeleteAsync($"https://localhost:7075/api/Users/{id.ToString()}");
+
+				httpResponseMessage.EnsureSuccessStatusCode();
+
+				return RedirectToAction("Index", "AdminUsers");
+			}
+			catch (Exception ex)
+			{
+				// Console
+
+			}
+
+			return View("Edit");
+		}
+
     }
 
 }

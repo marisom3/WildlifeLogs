@@ -96,7 +96,7 @@ namespace WildlifeLogAPI.Controllers
                 var user = mapper.Map<IdentityUser>(updateUserRequestDto);
 
                 //use repository to update 
-                var updatedUser = await userRepository.UpdateAsync(id, user, updateUserRequestDto.Password, updateUserRequestDto.Roles);
+                var updatedUser = await userRepository.UpdateAsync(id, user, updateUserRequestDto.Roles);
 
                 //if null, return notFOund
                 if (updatedUser == null)

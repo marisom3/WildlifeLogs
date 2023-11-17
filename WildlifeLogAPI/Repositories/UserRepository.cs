@@ -100,7 +100,7 @@ namespace WildlifeLogAPI.Repositories
         }
 
         //Update User 
-        public async Task<IdentityUser?> UpdateAsync(Guid id, IdentityUser user, string newPassword, IEnumerable<string> newRoles)
+        public async Task<IdentityUser?> UpdateAsync(Guid id, IdentityUser user, IEnumerable<string> newRoles)
         {
             //Get the user we want to update
             var existingUser = await userManager.Users.FirstOrDefaultAsync(x => x.Id == id.ToString());
@@ -112,17 +112,17 @@ namespace WildlifeLogAPI.Repositories
                 existingUser.UserName = user.UserName;
                 existingUser.Email = user.Email;
 
-                //update password 
-                if(!string.IsNullOrEmpty(newPassword))
-                {
-                    var token = await userManager.GeneratePasswordResetTokenAsync(existingUser);
-                    var results = await userManager.ResetPasswordAsync(existingUser, token, newPassword);
+                ////update password 
+                //if(!string.IsNullOrEmpty(newPassword))
+                //{
+                //    var token = await userManager.GeneratePasswordResetTokenAsync(existingUser);
+                //    var results = await userManager.ResetPasswordAsync(existingUser, token, newPassword);
 
-                    if(!results.Succeeded)
-                    {
-                        return null; 
-                    }
-                }
+                //    if(!results.Succeeded)
+                //    {
+                //        return null; 
+                //    }
+                //}
 
                 //Update roles if new roles are provided 
                 if(newRoles != null)
