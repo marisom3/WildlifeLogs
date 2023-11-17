@@ -35,11 +35,12 @@
 						<li>
 							<a class="nav-link text-dark" asp-area="" asp-controller="Logs" asp-action="Index">Your Logs</a>
 						</li>
-
+						<li class="nav-item">
+							<a class="nav-link text-dark" asp-area="" asp-controller="AdminUsers" asp-action="Index">Users</a>
+						</li>
 						<li class="nav-item">
 							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
 						</li>
-
 					</ul>
 					<div class="d-flex align-items-center">
 						@if(signInManager.IsSignedIn(User))

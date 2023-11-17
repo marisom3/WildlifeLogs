@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WildlifeLogAPI.Data
 {
-    public class WildlifeLogAuthDbContext : IdentityDbContext
+    public class WildlifeLogAuthDbContext : IdentityDbContext<IdentityUser>
     {
         public WildlifeLogAuthDbContext(DbContextOptions<WildlifeLogAuthDbContext> options) : base(options) 
         {

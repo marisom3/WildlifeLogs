@@ -5,8 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WildlifeLogAPI.Models.DomainModels;
-
-
+using WildlifeLogAPI.Models.DTO;
 
 namespace WildlifeLogAPI.Repositories
 {
@@ -62,17 +61,43 @@ namespace WildlifeLogAPI.Repositories
         }
 
         //Get all Users
-        public async Task<IEnumerable<IdentityUser>> GetAllAsync()
+        public async Task<IEnumerable<UserDto>> GetAllAsync()
         {
-           return await userManager.Users.Include(u => u.Roles).ToListAsync();
+          
+            var users = await userManager.Users.ToListAsync();
+
+            var usersDto = users.Select(user => new UserDto
+            {
+                Id = new Guid(user.Id),
+                UserName = user.UserName,
+                Email = user.Email,
+                Roles = userManager.GetRolesAsync(user).Result 
+            });
+
+            return usersDto;
         }
 
         //Get User By Id
-        public async Task<IdentityUser?> GetByIdAsync(Guid id)
+        public async Task<UserDto?> GetByIdAsync(Guid id)
         {
-            return await userManager.Users.Include(u => u.Roles).FirstOrDefaultAsync(x => x.Id == id.ToString());
-        }
+            var user = await userManager.Users.FirstOrDefaultAsync(x => x.Id == id.ToString());
 
+            if (user != null)
+            {
+                var userDto = new UserDto
+                {
+                    Id = new Guid(user.Id),
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    Roles = await userManager.GetRolesAsync(user)
+                };
+
+                return userDto;
+
+                //return await userManager.Users.FirstOrDefaultAsync(x => x.Id == id.ToString());
+            }
+            return null;
+        }
 
         //Update User 
         public async Task<IdentityUser?> UpdateAsync(Guid id, IdentityUser user, string newPassword, IEnumerable<string> newRoles)

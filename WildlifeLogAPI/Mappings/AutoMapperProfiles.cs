@@ -7,12 +7,6 @@ namespace WildlifeLogAPI.Mappings
 {
     public class AutoMapperProfiles : Profile
     {
-        private readonly UserManager<IdentityUser> userManager;
-
-        public AutoMapperProfiles(UserManager<IdentityUser> userManager)
-        {
-            this.userManager = userManager;
-        }
         
         public AutoMapperProfiles()
         {
@@ -25,9 +19,7 @@ namespace WildlifeLogAPI.Mappings
             CreateMap<UpdateLogRequestDto, Log>().ReverseMap();
             CreateMap<IdentityUser, CreateUserDto>().ReverseMap();
             CreateMap<IdentityUser, UpdateUserRequestDto>().ReverseMap();  
-            CreateMap<IdentityUser, UserDto>()
-                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => userManager.GetRolesAsync(src).Result))
-                .ReverseMap();
+            CreateMap<IdentityUser, UserDto>().ReverseMap();
 
         }
     }

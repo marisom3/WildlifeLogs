@@ -1,0 +1,86 @@
+﻿@model IEnumerable<WildlifeLog.UI.Models.DTO.UsersDto>
+
+@{
+}
+
+<h2>All Users</h2>
+
+<!-- "Create User" Button -->
+<div class="mb-3 d-flex justify-content-end">
+    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalCreateUser">
+        Create User
+    </button>
+</div>
+
+
+
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>UserName</th>
+			<th>Email</th>
+			<th>Roles</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var user in Model)
+		{
+			<tr>
+				<td>@user.Id</td>
+				<td>@user.UserName</td>
+				<td>@user.Email</td>
+				<td>
+					@foreach (var role in user.Roles)
+					{
+						<span>@role</span>
+					}
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+
+
+<!-- Modal -->
+<form method="post" id="createUserForm" action="@Url.Action("Add", "AdminUsers")">
+    <div class="modal fade" id="modalCreateUser" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Create New User</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="UserName" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        <input type="text" class="form-control" name="Email" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="Password" />
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" id="chkUserRole" class="form-check-input" name="Roles" value="User" checked disabled />
+                            <label class="form-check-label" for="chkUserRole">User Role</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" id="chkAdminRole" class="form-check-input" name="Roles" value="Admin" />
+                            <label class="form-check-label" for="chkAdminRole">Admin Role</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
