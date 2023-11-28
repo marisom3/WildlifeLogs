@@ -11,6 +11,7 @@ namespace WildlifeLogAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize(Roles = "Admin, User")]
     public class LogController : ControllerBase
     {
         private readonly ILogRepository logRepository;
@@ -39,7 +40,7 @@ namespace WildlifeLogAPI.Controllers
 
         [HttpGet]
         [Route("{id:Guid}")]
-        //[Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
         {
             //Get log by id using repository 
@@ -60,7 +61,7 @@ namespace WildlifeLogAPI.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> CreateAsync(AddLogRequestDto addLogRequestDto)
         {
             if (ModelState.IsValid)
@@ -85,7 +86,7 @@ namespace WildlifeLogAPI.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
-        //[Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> UpdateAsync([FromRoute] Guid id, [FromBody] UpdateLogRequestDto updateLogRequestDto)
         {
             if (ModelState.IsValid)
@@ -118,7 +119,7 @@ namespace WildlifeLogAPI.Controllers
 
         [HttpDelete]
         [Route("{id:Guid}")]
-        //[Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
         {
             //check databse 

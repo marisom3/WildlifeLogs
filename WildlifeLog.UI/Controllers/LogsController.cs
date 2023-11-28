@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text;
 using WildlifeLog.UI.Models.DTO;
 using WildlifeLog.UI.Models.ViewModels;
+using System.Net.Http.Headers;
 
 namespace WildlifeLog.UI.Controllers
 {
@@ -27,8 +28,15 @@ namespace WildlifeLog.UI.Controllers
 				//create client 
 				var client = httpClientFactory.CreateClient();
 
-				//use client to talk to the API + get back all the park info 
-				var httpResponseMessage = await client.GetAsync("https://localhost:7075/api/log");
+                // Send the JWT token in the Authorization header
+                var jwtToken = HttpContext.Session.GetString("JwtToken");
+                if (!string.IsNullOrEmpty(jwtToken))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+                }
+
+                //use client to talk to the API + get back all the park info 
+                var httpResponseMessage = await client.GetAsync("https://localhost:7075/api/log");
 
 				//EnsureSuccess 
 				httpResponseMessage.EnsureSuccessStatusCode();
@@ -51,8 +59,14 @@ namespace WildlifeLog.UI.Controllers
 			//Create client 
 			var client = httpClientFactory.CreateClient();
 
-			//Fetch the list of parks and categories 
-			var parksResponse = await client.GetAsync("https://localhost:7075/api/parks");
+            // Send the JWT token in the Authorization header
+            var jwtToken = HttpContext.Session.GetString("JwtToken");
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            }
+            //Fetch the list of parks and categories 
+            var parksResponse = await client.GetAsync("https://localhost:7075/api/parks");
 			var categoriesResponse = await client.GetAsync("https://localhost:7075/api/categories");
 
 			// Ensure success for both requests
@@ -80,9 +94,15 @@ namespace WildlifeLog.UI.Controllers
             //Create client 
             var client = httpClientFactory.CreateClient();
 
+            // Send the JWT token in the Authorization header
+            var jwtToken = HttpContext.Session.GetString("JwtToken");
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            }
 
-			//create httpRequestMessage object
-			var httpRequestMessage = new HttpRequestMessage()
+            //create httpRequestMessage object
+            var httpRequestMessage = new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri("https://localhost:7075/api/log"),
@@ -114,7 +134,14 @@ namespace WildlifeLog.UI.Controllers
 			//create client 
             var client = httpClientFactory.CreateClient();
 
-			//use client to get the log data from the api 
+            // Send the JWT token in the Authorization header
+            var jwtToken = HttpContext.Session.GetString("JwtToken");
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            }
+
+            //use client to get the log data from the api 
             var log = await client.GetFromJsonAsync<LogDto>($"https://localhost:7075/api/log/{id.ToString()}");
 
 
@@ -128,13 +155,16 @@ namespace WildlifeLog.UI.Controllers
             // Fetch the lists of parks and categories just like in your Add method
             var parksResponse = await client.GetAsync("https://localhost:7075/api/parks");
             var categoriesResponse = await client.GetAsync("https://localhost:7075/api/categories");
-
+			
+			//Make sure its a success?
             parksResponse.EnsureSuccessStatusCode();
             categoriesResponse.EnsureSuccessStatusCode();
 
+			//use the client to convert the Json response form the API to a list of the DTOs
             var parks = await parksResponse.Content.ReadFromJsonAsync<List<ParkDto>>();
             var categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryDto>>();
 
+			//
             var viewModel = new UpdateLogViewModel
             {
 				ObserverName = log.ObserverName,
@@ -152,6 +182,10 @@ namespace WildlifeLog.UI.Controllers
 				Categories = categories
 			};
 
+
+			//Code brian helped me with 
+
+
             return View(viewModel);
 
 		}
@@ -162,8 +196,15 @@ namespace WildlifeLog.UI.Controllers
 			//create client 
 			var client = httpClientFactory.CreateClient();
 
-			//create httpRequestMessage 
-			var httpRequestMessage = new HttpRequestMessage()
+            // Send the JWT token in the Authorization header
+            var jwtToken = HttpContext.Session.GetString("JwtToken");
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            }
+
+            //create httpRequestMessage 
+            var httpRequestMessage = new HttpRequestMessage()
 			{
 				Method = HttpMethod.Put,
 				RequestUri = new Uri($"https://localhost:7075/api/log/{request.Id}"),
@@ -197,7 +238,14 @@ namespace WildlifeLog.UI.Controllers
 			{
 				var client = httpClientFactory.CreateClient();
 
-				var httpResponseMessage = await client.DeleteAsync($"https://localhost:7075/api/log/{request.Id}");
+                // Send the JWT token in the Authorization header
+                var jwtToken = HttpContext.Session.GetString("JwtToken");
+                if (!string.IsNullOrEmpty(jwtToken))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+                }
+
+                var httpResponseMessage = await client.DeleteAsync($"https://localhost:7075/api/log/{request.Id}");
 
 				httpResponseMessage.EnsureSuccessStatusCode();
 

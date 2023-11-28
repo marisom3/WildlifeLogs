@@ -92,3 +92,5 @@ C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLogAPI\obj\Debug\net7.0
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLogAPI\obj\Debug\net7.0\WildlifeLogAPI.pdb
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLogAPI\obj\Debug\net7.0\WildlifeLogAPI.genruntimeconfig.cache
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLogAPI\obj\Debug\net7.0\ref\WildlifeLogAPI.dll
+C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLogAPI\bin\Debug\net7.0\CloudinaryDotNet.dll
+C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLogAPI\bin\Debug\net7.0\Newtonsoft.Json.dll

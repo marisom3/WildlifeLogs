@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using WildlifeLog.UI.Models.DTO;
@@ -32,6 +33,13 @@ namespace WildlifeLog.UI.Controllers
                 //create a http client which we use to send http requests to talk to teh web api 
                 var client = httpClientFactory.CreateClient();
 
+                // Send the JWT token in the Authorization header
+                var jwtToken = HttpContext.Session.GetString("JwtToken");
+                if (!string.IsNullOrEmpty(jwtToken))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+                }
+
                 //use the client to get the http response message from the api from this ("address") 
                 var httpResponseMessage = await client.GetAsync("https://localhost:7075/api/users");
 
@@ -58,6 +66,13 @@ namespace WildlifeLog.UI.Controllers
 
             // Create a HttpClient
             var client = httpClientFactory.CreateClient();
+
+            // Send the JWT token in the Authorization header
+            var jwtToken = HttpContext.Session.GetString("JwtToken");
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            }
 
             // Initialize Roles to an empty list if it's null
             if (createUserDto.Roles == null)
@@ -103,6 +118,13 @@ namespace WildlifeLog.UI.Controllers
             //create client 
             var client = httpClientFactory.CreateClient();
 
+            // Send the JWT token in the Authorization header
+            var jwtToken = HttpContext.Session.GetString("JwtToken");
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            }
+
             //use client to get the data from teh api
             //we send it to that url and include the id 
             //also we convert the response from JSON to User Dto 
@@ -125,9 +147,16 @@ namespace WildlifeLog.UI.Controllers
         {
             //create client 
             var client = httpClientFactory.CreateClient();
-			
+
+            // Send the JWT token in the Authorization header
+            var jwtToken = HttpContext.Session.GetString("JwtToken");
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            }
+
             // Initialize Roles to an empty list if it's null
-			if (updateUserDto.Roles == null)
+            if (updateUserDto.Roles == null)
 			{
 				updateUserDto.Roles = new List<string>();
 			}
@@ -170,7 +199,14 @@ namespace WildlifeLog.UI.Controllers
 			{
 				var client = httpClientFactory.CreateClient();
 
-				var httpResponseMessage = await client.DeleteAsync($"https://localhost:7075/api/Users/{id.ToString()}");
+                // Send the JWT token in the Authorization header
+                var jwtToken = HttpContext.Session.GetString("JwtToken");
+                if (!string.IsNullOrEmpty(jwtToken))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+                }
+
+                var httpResponseMessage = await client.DeleteAsync($"https://localhost:7075/api/Users/{id.ToString()}");
 
 				httpResponseMessage.EnsureSuccessStatusCode();
 

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using WildlifeLogAPI.Data;
 using WildlifeLogAPI;
+using WildlifeLog.UI.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +33,20 @@ builder.Services.AddDbContext<WildlifeLogDbContext>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 	.AddEntityFrameworkStores<WildlifeLogDbContext>()
 	.AddDefaultTokenProviders();
+
+//inject cloudinary 
+builder.Services.AddScoped<IImageRepository, CloudinaryRepository>();
+
 ////////////////////////////////////////////////////////////
+///
+// Configure authentication cookie options
+builder.Services.ConfigureApplicationCookie(options =>
+{
+	options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Set your desired expiration time
+	options.Cookie.HttpOnly = true;
+	options.Cookie.IsEssential = true;
+	options.SlidingExpiration = true;
+});
 
 
 var app = builder.Build();
@@ -50,11 +64,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseSession();
+
 app.UseAuthentication();
-
 app.UseAuthorization();
-
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

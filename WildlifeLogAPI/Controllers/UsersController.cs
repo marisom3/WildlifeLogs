@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using WildlifeLogAPI.Models.DomainModels;
 using WildlifeLogAPI.Models.DTO;
 using WildlifeLogAPI.Repositories;
@@ -10,6 +12,7 @@ namespace WildlifeLogAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository userRepository;

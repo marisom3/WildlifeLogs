@@ -98,3 +98,5 @@ C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.genruntimeconfig.cache
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\ref\WildlifeLog.UI.dll
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\CloudinaryDotNet.dll
+C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\Newtonsoft.Json.dll

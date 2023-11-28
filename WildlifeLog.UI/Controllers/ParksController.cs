@@ -4,6 +4,7 @@ using System.Text.Json;
 using WildlifeLog.UI.Models.DTO;
 using WildlifeLog.UI.Models.ViewModels;
 using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace WildlifeLog.UI.Controllers
 {
@@ -26,9 +27,17 @@ namespace WildlifeLog.UI.Controllers
 			{
 				//create a http client which we use to send http requests to talk to teh web api 
 				var client = httpClientFactory.CreateClient();
+               
+				//send toeken to Authoirzation header
+				var jwtToken = HttpContext.Session.GetString("JwtToken");
 
-				//use the client to get the http response message from the api from this ("address") 
-				var httpResponseMessage = await client.GetAsync("https://localhost:7075/api/parks");
+                if (!string.IsNullOrEmpty(jwtToken))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+                }
+
+                //use the client to get the http response message from the api from this ("address") 
+                var httpResponseMessage = await client.GetAsync("https://localhost:7075/api/parks");
 
 				//Use this built in method EnsureSuccessStatusCode to ensure that its a sucess
 				//or it will throw an exception which if it does, the try catch gets it  
@@ -63,8 +72,17 @@ namespace WildlifeLog.UI.Controllers
 			//Create client 
 			var client = httpClientFactory.CreateClient();
 
-			//create httpRequestMessage object
-			var httpRequestMessage = new HttpRequestMessage()
+            // Retrieve the JWT token from wherever it's stored (e.g., session, cookie)
+            var jwtToken = HttpContext.Session.GetString("JwtToken");
+
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                // Set the Authorization header with the JWT token
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            }
+
+            //create httpRequestMessage object
+            var httpRequestMessage = new HttpRequestMessage()
 			{
 				Method = HttpMethod.Post,
 				RequestUri = new Uri("https://localhost:7075/api/parks"),
@@ -97,10 +115,19 @@ namespace WildlifeLog.UI.Controllers
 			//create client 
 			var client = httpClientFactory.CreateClient();
 
-			//use client to get the data from teh api
-			//we send it to that url and include the id 
-			//also we convert the response from JSON to Park Dto 
-			var response = await client.GetFromJsonAsync<ParkDto>($"https://localhost:7075/api/Parks/{id.ToString()}");
+            // Retrieve the JWT token from wherever it's stored (e.g., session, cookie)
+            var jwtToken = HttpContext.Session.GetString("JwtToken");
+
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                // Set the Authorization header with the JWT token
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            }
+
+            //use client to get the data from teh api
+            //we send it to that url and include the id 
+            //also we convert the response from JSON to Park Dto 
+            var response = await client.GetFromJsonAsync<ParkDto>($"https://localhost:7075/api/Parks/{id.ToString()}");
 
 			//if the response is not null aka we were able to grab the park by its id,
 			//return it to the view 
@@ -119,8 +146,17 @@ namespace WildlifeLog.UI.Controllers
 			//create client 
 			var client = httpClientFactory.CreateClient();
 
-			//create httpRequestMessage 
-			var httpRequestMessage = new HttpRequestMessage()
+            // Retrieve the JWT token from wherever it's stored (e.g., session, cookie)
+            var jwtToken = HttpContext.Session.GetString("JwtToken");
+
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                // Set the Authorization header with the JWT token
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            }
+
+            //create httpRequestMessage 
+            var httpRequestMessage = new HttpRequestMessage()
 			{
 				Method = HttpMethod.Put,
 				RequestUri = new Uri($"https://localhost:7075/api/parks/{request.Id}"),
@@ -154,7 +190,16 @@ namespace WildlifeLog.UI.Controllers
 			{
 				var client = httpClientFactory.CreateClient();
 
-				var httpResponseMessage = await client.DeleteAsync($"https://localhost:7075/api/parks/{request.Id}");
+                // Retrieve the JWT token from wherever it's stored (e.g., session, cookie)
+                var jwtToken = HttpContext.Session.GetString("JwtToken");
+
+                if (!string.IsNullOrEmpty(jwtToken))
+                {
+                    // Set the Authorization header with the JWT token
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+                }
+
+                var httpResponseMessage = await client.DeleteAsync($"https://localhost:7075/api/parks/{request.Id}");
 
 				httpResponseMessage.EnsureSuccessStatusCode();
 

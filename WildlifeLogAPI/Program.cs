@@ -79,8 +79,8 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 //Inject IToken Repository 
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
-//Inject IImageRepository 
-builder.Services.AddScoped<IImageRepository, ImageRepository>();
+//Inject IImageRepository Cloudinary
+builder.Services.AddScoped<IImageRepository, CloudinaryImageRepository>();
 
 //Inject IUserRepository 
 builder.Services.AddScoped<IUserRepository, UserRepository>();

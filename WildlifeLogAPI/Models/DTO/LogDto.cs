@@ -13,9 +13,10 @@
         public string Location { get; set; }
         public string? LogImageUrl { get; set; }
         public string Comments { get; set; }
-       
+		public Guid CategoryId { get; set; }
+		public Guid ParkId { get; set; }
 
-        public ParkDto Park { get; set; }
+		public ParkDto Park { get; set; }
         public CategoryDto Category { get; set; }
 
 
