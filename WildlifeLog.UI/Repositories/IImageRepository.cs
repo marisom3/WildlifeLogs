@@ -3,6 +3,6 @@
 	public interface IImageRepository
 	{
 		//upload Image 
-		Task<string> Upload(IFormFile file);
+		Task<string> UploadAsync(IFormFile file);
 	}
 }

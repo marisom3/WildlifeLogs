@@ -3,14 +3,15 @@ using CloudinaryDotNet;
 
 namespace WildlifeLog.UI.Repositories
 {
-	public class CloudinaryRepository : IImageRepository
+	public class CloudinaryImageRepository : IImageRepository
 	{
 		private readonly IConfiguration configuration;
 		private readonly Account account;
 
 
-        public CloudinaryRepository(IConfiguration configuration)
+        public CloudinaryImageRepository(IConfiguration configuration)
 		{
+			//inject IConfiguration to access the cloudinary stuff from appsettings.josn
 			this.configuration = configuration;
 
 			//create a CLoudinary account 
@@ -20,12 +21,12 @@ namespace WildlifeLog.UI.Repositories
 				configuration.GetSection("Cloudinary")["ApiSecret"]);
 		}
 
-		public async Task<string> Upload(IFormFile file)
+		public async Task<string> UploadAsync(IFormFile file)
 		{
 			//create a new client 
 			var client = new Cloudinary(account);
 
-			//upload params
+			//upload parameters 
 			var uploadParams = new ImageUploadParams()
 			{
 				File = new FileDescription(file.FileName, file.OpenReadStream()),
@@ -41,6 +42,7 @@ namespace WildlifeLog.UI.Repositories
 				//return the url 
 				return uploadResult.SecureUrl.ToString();
 			}
+
 			return null;
 		}
 	}

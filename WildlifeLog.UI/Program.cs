@@ -35,7 +35,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 	.AddDefaultTokenProviders();
 
 //inject cloudinary 
-builder.Services.AddScoped<IImageRepository, CloudinaryRepository>();
+builder.Services.AddScoped<IImageRepository, CloudinaryImageRepository>();
 
 ////////////////////////////////////////////////////////////
 ///

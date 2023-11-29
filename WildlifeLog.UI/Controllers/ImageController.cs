@@ -9,22 +9,19 @@ namespace WildlifeLog.UI.Controllers
 	[ApiController]
 	public class ImageController : ControllerBase
 	{
+        private readonly IImageRepository imageRepository;
 
-		private readonly IImageRepository imageRepository;
+        public ImageController(IImageRepository imageRepository)
+        {
+            this.imageRepository = imageRepository;
+        }
 
-		public ImageController(IImageRepository imageRepository)
+        //POST: /api/Images/Upload 
+        [HttpPost]
+		public async Task<IActionResult> UploadAsync(IFormFile file)
 		{
-			this.imageRepository = imageRepository;
-		}
-
-		//POST: /api/Images/Upload 
-		[HttpPost]
-		[Route("Upload")]
-		public async Task<IActionResult> Upload(IFormFile file)
-		{
-
 			//call repository 
-			var imageURL = await imageRepository.Upload(file);
+			var imageURL = await imageRepository.UploadAsync(file);
 
 			//check if an image url string was returned, if not then show an error
 			if (imageURL == null)

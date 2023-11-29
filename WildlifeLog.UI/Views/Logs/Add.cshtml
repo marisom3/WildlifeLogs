@@ -69,7 +69,8 @@
 		<label class="form-label">Image Upload</label>
 		<input type="file" id="logImageUpload" class="form-control" />
 
-		<img src="" id="logImageDisplay" style="display:none;width: 300px;" />
+		<img src="" id="logImageDisplay" style="display:none;width:300px;" />
+
 	</div>
 
 	<div class="mb-3">
@@ -92,23 +93,23 @@
 </form>
 @section Scripts {
 	<script>
-		var editor = new FroalaEditor('#content', {
-			imageUploadURL: "/api/images"
-		});
 
 
 		const featuredUploadElement = document.getElementById('logImageUpload');
 		const featuredImageUrlElement = document.getElementById('logImageUrl');
 		const featuredImageDisplayElement = document.getElementById('logImageDisplay');
 
-
+		//Create the function that gets triggered byt he even listner
 		async function uploadFeaturedImage(e) {
+			//write to the console and see if the file is coming through
 			console.log(e.target.files[0]);
+
+			//talk to the cloudinary api and provide it with all the information
 
 			let data = new FormData();
 			data.append('file', e.target.files[0]);
 
-			await fetch('/api/images', {
+			await fetch('/api/image', {
 				method: 'POST',
 				headers: {
 					'Accept': '*/*',
@@ -120,6 +121,7 @@
 					featuredImageDisplayElement.src = result.link;
 					featuredImageDisplayElement.style.display = 'block';
 				});
+
 		}
 
 
