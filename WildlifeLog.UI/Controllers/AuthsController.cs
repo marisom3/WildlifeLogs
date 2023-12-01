@@ -82,6 +82,7 @@ namespace WildlifeLog.UI.Controllers
 		{
 			try
 			{
+
 				//create the client 
 				var client = httpClientFactory.CreateClient();
 
@@ -94,8 +95,7 @@ namespace WildlifeLog.UI.Controllers
 					Content = new StringContent(JsonSerializer.Serialize(loginViewModel), Encoding.UTF8, "application/json")
 				};
 
-
-
+		
 				//use cleint to send httpRequestMessage to api and we get a json response abck 
 				var httpResponseMessage = await client.SendAsync(httpRequestMessage);
 
@@ -117,17 +117,13 @@ namespace WildlifeLog.UI.Controllers
 				// Include the token in the Authorization header for subsequent requests
 				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
 
-
-				// Sign in the user using SignInManager
-				//var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
-				//{
-				//	new Claim(ClaimTypes.Email, loginViewModel.Email),
-
-				//}, "MyCookieMiddlewareInstance"));
-
-
 				// Specify the authentication type when creating ClaimsIdentity
-				var userIdentity = new ClaimsIdentity("MyCookieMiddlewareInstance");
+				var userIdentity = new ClaimsIdentity(new[]
+				{
+					new Claim(ClaimTypes.Email, loginViewModel.Email),
+					new Claim(ClaimTypes.AuthenticationMethod, "MyCookieMiddlewareInstance"),
+				}, "MyCookieMiddlewareInstance");
+
 
 				// Use ClaimsPrincipal with the specified ClaimsIdentity
 				var user = new ClaimsPrincipal(userIdentity);

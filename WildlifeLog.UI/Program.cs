@@ -7,7 +7,7 @@ using WildlifeLog.UI.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+
 
 //Inject HttpClient
 builder.Services.AddHttpClient();
@@ -27,7 +27,7 @@ builder.Services.AddSession(options =>
 {
     // Configure session options as needed
     options.IdleTimeout = TimeSpan.FromMinutes(30);
-	options.Cookie.Name = "AuthToken";
+	options.Cookie.Name = "SessionCookie";
 	options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
@@ -65,14 +65,6 @@ builder.Services.AddAuthentication(options =>
 });
 
 
-// Configure authentication cookie options
-//builder.Services.ConfigureApplicationCookie(options =>
-//{
-//	options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Set your desired expiration time
-//	options.Cookie.HttpOnly = true;
-//	options.Cookie.IsEssential = true;
-//	options.SlidingExpiration = true;
-//});
 
 
 var app = builder.Build();

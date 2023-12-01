@@ -1,9 +1,4 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> signInManager
-
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -43,7 +38,7 @@
 						</li>
 					</ul>
 					<div class="d-flex align-items-center">
-						@if (signInManager.IsSignedIn(User))
+						@if (User.Identity.IsAuthenticated)
 						{
 							<div class="me-3 text-light">
 								@User?.Identity?.Name
@@ -53,10 +48,7 @@
 						}
 						else
 						{
-							<p>IsAuthenticated: @User.Identity.IsAuthenticated</p>
-						
-
-							<p> User is not signed in </p>
+		
 							<a class="btn me-3 bg-light text-dark"
 							   asp-area=""
 							   asp-controller="Auths"

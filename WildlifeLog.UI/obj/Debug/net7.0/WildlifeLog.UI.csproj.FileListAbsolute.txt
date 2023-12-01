@@ -13,6 +13,7 @@ C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\Azure.Core.dll
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\Azure.Identity.dll
+C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\CloudinaryDotNet.dll
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.Internal.dll
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
@@ -39,6 +40,7 @@ C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\Microsoft.OpenApi.dll
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\Microsoft.SqlServer.Server.dll
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\Newtonsoft.Json.dll
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\Serilog.dll
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\Serilog.AspNetCore.dll
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\Serilog.Extensions.Hosting.dll
@@ -78,6 +80,7 @@ C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.AssemblyInfoInputs.cache
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.AssemblyInfo.cs
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.csproj.CoreCompileInputs.cache
+C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.RazorAssemblyInfo.cache
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.RazorAssemblyInfo.cs
@@ -97,6 +100,3 @@ C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.pdb
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.genruntimeconfig.cache
 C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\ref\WildlifeLog.UI.dll
-C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\obj\Debug\net7.0\WildlifeLog.UI.MvcApplicationPartsAssemblyInfo.cs
-C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\CloudinaryDotNet.dll
-C:\Users\17146\Documents\WildlifeLog\WildlifeLog\WildlifeLog.UI\bin\Debug\net7.0\Newtonsoft.Json.dll
