@@ -16,7 +16,7 @@
 <table class ="table table-bordered">
     <thead>
         <tr>
-            
+			<th>Image</th>
             <th>Observer's Name</th>
             <th>Date</th>
             <th>Confidence</th>
@@ -26,14 +26,14 @@
             <th>Location</th>
             <th>Park</th>
 			<th>Anmal Type</th>
-			<th>Image</th>
+			
         </tr>
     </thead>
     <tbody>
         @foreach(var log in Model)
         {
             <tr>
-                
+				<td><img src="@log.LogImageUrl" id="logImageDisplay" style="display:block;width:300px;" /></td>
                 <td>@log.ObserverName</td>
                 <td>@log.Date</td>
                 <td>@log.Confidence</td>
@@ -43,7 +43,7 @@
                 <td>@log.Location</td>
                 <td>@log.Park.Name</td>
 				<td>@log.Category.Name</td>
-                <td><img src="@log.LogImageUrl" id="logImageDisplay" style="display:block;width:300px;" /></td>
+               
             </tr>
         }
     </tbody>

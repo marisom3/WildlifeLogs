@@ -13,15 +13,13 @@ namespace WildlifeLogAPI.Controllers
 	{
 		private readonly UserManager<IdentityUser> userManager;
 		private readonly ITokenRepository tokenRepository;
-		//private readonly SignInManager<IdentityUser> signInManager;
+		
 
-		public AuthController(UserManager<IdentityUser> userManager,
-			ITokenRepository tokenRepository)
-		//,SignInManager<IdentityUser> signInManager)
+		public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
 		{
 			this.userManager = userManager;
 			this.tokenRepository = tokenRepository;
-			//this.signInManager = signInManager;
+			
 		}
 
 
@@ -72,7 +70,7 @@ namespace WildlifeLogAPI.Controllers
 			var user = await userManager.FindByEmailAsync(loginRequestDto.Email);
 
 
-			//check if the email is assciated with a user
+			//check if the email is associated with a user
 			//if it is filled in and we find it in the database then do the code required to log in 
 			if (user != null)
 			{
@@ -109,26 +107,5 @@ namespace WildlifeLogAPI.Controllers
 
 			return BadRequest("Username or password is incorect");
 		}
-
-		/*[HttpPost]
-        [Route("Logout")]
-        public async Task<IActionResult> Logout()
-        {
-
-            //get the user thats logged in?
-            var user = await userManager.GetUserAsync(User);
-
-            if (user != null)
-            {
-                // Sign out the user by clearing authentication cookies.
-                await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-
-                // Optionally, you can return a message indicating successful logout.
-                return Ok("User logged out.");
-            }
-
-            // Handle the case where the user is not found.
-            return BadRequest("User not found."); 
-        }*/
 	}
 }

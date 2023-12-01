@@ -12,6 +12,13 @@ builder.Services.AddControllersWithViews();
 //Inject HttpClient
 builder.Services.AddHttpClient();
 
+//inject logging 
+builder.Services.AddLogging(builder =>
+{
+	builder.AddConsole(); // Add other logging providers if needed
+});
+
+builder.Services.AddControllersWithViews();
 
 //Inject Session Configuration 
 builder.Services.AddDistributedMemoryCache();
@@ -20,7 +27,8 @@ builder.Services.AddSession(options =>
 {
     // Configure session options as needed
     options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
+	options.Cookie.Name = "AuthToken";
+	options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
 
@@ -28,10 +36,11 @@ builder.Services.AddSession(options =>
 //////////////////////////////////////////////////////////
 //Inject dbOCntext 
 builder.Services.AddDbContext<WildlifeLogDbContext>();
+builder.Services.AddDbContext<WildlifeLogAuthDbContext>();
 
 //inject identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-	.AddEntityFrameworkStores<WildlifeLogDbContext>()
+	.AddEntityFrameworkStores<WildlifeLogAuthDbContext>()
 	.AddDefaultTokenProviders();
 
 //inject cloudinary 
@@ -39,14 +48,31 @@ builder.Services.AddScoped<IImageRepository, CloudinaryImageRepository>();
 
 ////////////////////////////////////////////////////////////
 ///
-// Configure authentication cookie options
-builder.Services.ConfigureApplicationCookie(options =>
+
+// Configure authentication
+builder.Services.AddAuthentication(options =>
+{
+	options.DefaultScheme = "MyCookieMiddlewareInstance";
+	options.DefaultSignInScheme = "MyCookieMiddlewareInstance";
+	options.DefaultChallengeScheme = "MyCookieMiddlewareInstance";
+})
+.AddCookie("MyCookieMiddlewareInstance", options =>
 {
 	options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Set your desired expiration time
 	options.Cookie.HttpOnly = true;
 	options.Cookie.IsEssential = true;
 	options.SlidingExpiration = true;
 });
+
+
+// Configure authentication cookie options
+//builder.Services.ConfigureApplicationCookie(options =>
+//{
+//	options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Set your desired expiration time
+//	options.Cookie.HttpOnly = true;
+//	options.Cookie.IsEssential = true;
+//	options.SlidingExpiration = true;
+//});
 
 
 var app = builder.Build();
@@ -64,10 +90,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
+
 
 app.MapControllerRoute(
     name: "default",

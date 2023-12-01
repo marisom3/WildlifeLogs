@@ -17,12 +17,15 @@ namespace WildlifeLog.UI.Controllers
 		private readonly IHttpClientFactory httpClientFactory;
 		private readonly IHttpContextAccessor httpContextAccessor;
 		private readonly SignInManager<IdentityUser> signInManager;
+		private readonly ILogger<AuthsController> logger;
 
-		public AuthsController(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor, SignInManager<IdentityUser> signInManager)
+		public AuthsController(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor,
+			SignInManager<IdentityUser> signInManager, ILogger<AuthsController> logger)
 		{
 			this.httpClientFactory = httpClientFactory;
 			this.httpContextAccessor = httpContextAccessor;
 			this.signInManager = signInManager;
+			this.logger = logger;
 		}
 
 		[HttpGet]
@@ -77,28 +80,21 @@ namespace WildlifeLog.UI.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Login(LoginViewModel loginViewModel)
 		{
-
-			//create the client 
-			var client = httpClientFactory.CreateClient();
-
-
-			//create httpRequestMessage
-			var httpRequestMessage = new HttpRequestMessage()
-			{
-				Method = HttpMethod.Post,
-				RequestUri = new Uri("https://localhost:7075/api/auth/login"),
-				Content = new StringContent(JsonSerializer.Serialize(loginViewModel), Encoding.UTF8, "application/json")
-			};
-
 			try
 			{
-				// Send the JWT token in the Authorization header
-				var jwtToken = HttpContext.Session.GetString("JwtToken");
+				//create the client 
+				var client = httpClientFactory.CreateClient();
 
-				if (!string.IsNullOrEmpty(jwtToken))
+
+				//create httpRequestMessage
+				var httpRequestMessage = new HttpRequestMessage()
 				{
-					client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-				}
+					Method = HttpMethod.Post,
+					RequestUri = new Uri("https://localhost:7075/api/auth/login"),
+					Content = new StringContent(JsonSerializer.Serialize(loginViewModel), Encoding.UTF8, "application/json")
+				};
+
+
 
 				//use cleint to send httpRequestMessage to api and we get a json response abck 
 				var httpResponseMessage = await client.SendAsync(httpRequestMessage);
@@ -112,27 +108,43 @@ namespace WildlifeLog.UI.Controllers
 				// Deserialize the JSON response to a DTO (assuming LoginResponseDto is your DTO class)
 				var loginResponseDto = JsonSerializer.Deserialize<Models.DTO.LoginResponseDto>(response);
 
-				// If successful, store the JWT token (consider using a secure storage method)
-				jwtToken = loginResponseDto.jwtToken;
+				// Extract the JWT token from the response
+				var jwtToken = loginResponseDto.jwtToken;
 
-				// You may want to store the token for subsequent requests (e.g., in a secure cookie or session)
+				// Store the token for subsequent requests (consider more secure storage options)
 				HttpContext.Session.SetString("JwtToken", jwtToken);
+
+				// Include the token in the Authorization header for subsequent requests
+				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
 
 
 				// Sign in the user using SignInManager
-				var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
-				{
-					new Claim(ClaimTypes.Email, loginViewModel.Email),
+				//var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+				//{
+				//	new Claim(ClaimTypes.Email, loginViewModel.Email),
 
-				}, "custom"));
+				//}, "MyCookieMiddlewareInstance"));
 
+
+				// Specify the authentication type when creating ClaimsIdentity
+				var userIdentity = new ClaimsIdentity("MyCookieMiddlewareInstance");
+
+				// Use ClaimsPrincipal with the specified ClaimsIdentity
+				var user = new ClaimsPrincipal(userIdentity);
 
 				// Use SignInAsync to sign in the user
 
-				await HttpContext.SignInAsync(user, new AuthenticationProperties
+				await HttpContext.SignInAsync("MyCookieMiddlewareInstance", user, new AuthenticationProperties
 				{
-					IsPersistent = false // You can change this based on your requirements
+					ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
+					IsPersistent = false, // You can change this based on your requirements
+					AllowRefresh = false
 				});
+
+				// Log successful login
+				logger.LogInformation("User successfully logged in.");
+
+
 				return RedirectToAction("Index", "Home");
 
 
@@ -140,9 +152,15 @@ namespace WildlifeLog.UI.Controllers
 			catch (HttpRequestException)
 			{
 				// Handle request exception (e.g., log, display error message)
+				logger.LogError("Login failed due to HttpRequestException.");
 				return View();
 			}
-
+			catch (Exception ex)
+			{
+				// Handle other exceptions
+				logger.LogError(ex, "An unexpected error occurred during login.");
+				return View();
+			}
 		}
 
 
