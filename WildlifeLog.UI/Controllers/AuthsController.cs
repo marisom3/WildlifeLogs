@@ -95,14 +95,13 @@ namespace WildlifeLog.UI.Controllers
 					Content = new StringContent(JsonSerializer.Serialize(loginViewModel), Encoding.UTF8, "application/json")
 				};
 
-		
 				//use cleint to send httpRequestMessage to api and we get a json response abck 
 				var httpResponseMessage = await client.SendAsync(httpRequestMessage);
 
 				//Ensure success 
 				httpResponseMessage.EnsureSuccessStatusCode();
 
-				//"Read the body" as a string
+				//"Read the Response body" as a string
 				var response = await httpResponseMessage.Content.ReadAsStringAsync();
 
 				// Deserialize the JSON response to a DTO (assuming LoginResponseDto is your DTO class)
@@ -110,39 +109,55 @@ namespace WildlifeLog.UI.Controllers
 
 				// Extract the JWT token from the response
 				var jwtToken = loginResponseDto.jwtToken;
-
-				// Store the token for subsequent requests (consider more secure storage options)
-				HttpContext.Session.SetString("JwtToken", jwtToken);
-
-				// Include the token in the Authorization header for subsequent requests
-				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-
+				
 				// Specify the authentication type when creating ClaimsIdentity
 				var userIdentity = new ClaimsIdentity(new[]
 				{
 					new Claim(ClaimTypes.Email, loginViewModel.Email),
-					new Claim(ClaimTypes.AuthenticationMethod, "MyCookieMiddlewareInstance"),
-				}, "MyCookieMiddlewareInstance");
+					//new Claim(ClaimTypes.Role, model.User.Role)
+					new Claim(ClaimTypes.AuthenticationMethod, "AuthScheme"),
+				}, "AuthScheme");
+				
+				
+				// You may want to store the token for subsequent requests (e.g., in a secure cookie or session)
+				HttpContext.Session.SetString("JwtToken", jwtToken);
+
+
+
+				// Include the token in the Authorization header for subsequent requests
+				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+
 
 
 				// Use ClaimsPrincipal with the specified ClaimsIdentity
-				var user = new ClaimsPrincipal(userIdentity);
+				var principal = new ClaimsPrincipal(userIdentity);
+
+				HttpContext.User = principal;
+
 
 				// Use SignInAsync to sign in the user
 
-				await HttpContext.SignInAsync("MyCookieMiddlewareInstance", user, new AuthenticationProperties
+				await HttpContext.SignInAsync("AuthScheme", principal, new AuthenticationProperties
 				{
 					ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
 					IsPersistent = false, // You can change this based on your requirements
 					AllowRefresh = false
 				});
 
+				var claims = User.Claims.Select(c => $"{c.Type}: {c.Value}");
+				foreach (var claim in claims)
+				{
+					logger.LogInformation(claim);
+				}
+
+
 				// Log successful login
 				logger.LogInformation("User successfully logged in.");
 
 
-				return RedirectToAction("Index", "Home");
-
+				return View();
+				//Redirect("/Home/Index");
 
 			}
 			catch (HttpRequestException)

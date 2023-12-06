@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using WildlifeLogAPI.Data;
 using WildlifeLogAPI;
 using WildlifeLog.UI.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,11 +26,11 @@ builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSession(options =>
 {
-    // Configure session options as needed
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+	// Configure session options as needed
+	options.IdleTimeout = TimeSpan.FromMinutes(30);
 	options.Cookie.Name = "SessionCookie";
 	options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
+	options.Cookie.IsEssential = true;
 });
 
 
@@ -50,18 +51,17 @@ builder.Services.AddScoped<IImageRepository, CloudinaryImageRepository>();
 ///
 
 // Configure authentication
-builder.Services.AddAuthentication(options =>
-{
-	options.DefaultScheme = "MyCookieMiddlewareInstance";
-	options.DefaultSignInScheme = "MyCookieMiddlewareInstance";
-	options.DefaultChallengeScheme = "MyCookieMiddlewareInstance";
-})
-.AddCookie("MyCookieMiddlewareInstance", options =>
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+.AddCookie(options =>
 {
 	options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Set your desired expiration time
 	options.Cookie.HttpOnly = true;
 	options.Cookie.IsEssential = true;
 	options.SlidingExpiration = true;
+	options.LoginPath = "/Home/Index";
+	options.AccessDeniedPath = "/Auths/AccessDenied";
+	options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
 });
 
 
@@ -82,10 +82,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseSession();
+
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

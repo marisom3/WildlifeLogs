@@ -1,5 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Identity
 
+@{
+	bool isAuthenticated = User.Identity.IsAuthenticated;
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,16 +42,19 @@
 						</li>
 					</ul>
 					<div class="d-flex align-items-center">
-						@if (User.Identity.IsAuthenticated)
+						@if (isAuthenticated)
 						{
 							<div class="me-3 text-light">
 								@User?.Identity?.Name
 							</div>
 
+							<p>IsAuthenticated: @isAuthenticated</p>
 							
 						}
 						else
 						{
+							<p>IsAuthenticated: @isAuthenticated</p>
+
 		
 							<a class="btn me-3 bg-light text-dark"
 							   asp-area=""

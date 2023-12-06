@@ -16,11 +16,60 @@
 		<label class="form-label">Ecosystem</label>
 		<input type="text" class="form-control" asp-for="Ecosystem"/>
 	</div>
+
 	<div class="mt-3">
-		<label class="form-label">Park Image</label>
-		<input type="file" class="form-control" asp-for="ParkImageUrl"/>
+		<label class="form-label">Image Upload</label>
+		<input type="file" id="parkImageUpload" class="form-control" />
+
+		<img src="" id="parkImageDisplay" style="display:none;width:300px;" />
+
+	</div>
+	<div class="mb-3">
+		<label class="form-label">Image Url</label>
+		<input type="text" class="form-control" id="parkImageUrl" asp-for="ParkImageUrl" />
 	</div>
 	<div class="mt-3">
 		<button type="submit" class="btn btn-primary">Save</button>
 	</div>
 </form>
+
+
+
+@section Scripts {
+	<script>
+
+
+		const featuredUploadElement = document.getElementById('parkImageUpload');
+		const featuredImageUrlElement = document.getElementById('parkImageUrl');
+		const featuredImageDisplayElement = document.getElementById('parkImageDisplay');
+
+		//Create the function that gets triggered byt he even listner
+		async function uploadFeaturedImage(e) {
+			//write to the console and see if the file is coming through
+			console.log(e.target.files[0]);
+
+			//talk to the cloudinary api and provide it with all the information
+
+			let data = new FormData();
+			data.append('file', e.target.files[0]);
+
+			await fetch('/api/image', {
+				method: 'POST',
+				headers: {
+					'Accept': '*/*',
+				},
+				body: data
+			}).then(response => response.json())
+				.then(result => {
+					featuredImageUrlElement.value = result.link;
+					featuredImageDisplayElement.src = result.link;
+					featuredImageDisplayElement.style.display = 'block';
+				});
+
+		}
+
+
+		featuredUploadElement.addEventListener('change', uploadFeaturedImage);
+
+	</script>
+}

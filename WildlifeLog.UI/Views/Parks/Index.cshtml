@@ -11,6 +11,7 @@
 <table class="table table-bordered">
 	<thead>
 		<tr>
+			<th>Park Image</th>
 			<th>Id</th>
 			<th>Name</th>
 			<th>Address</th>
@@ -23,6 +24,7 @@
 		@foreach (var park in Model)
 		{
 			<tr>
+				<td><img src="@park.ParkImageUrl" id="parkImageDisplay" style="display:block;width:300px;"/> </td>
 				<td>@park.Id</td>
 				<td>@park.Name</td>
 				<td>@park.Address</td>

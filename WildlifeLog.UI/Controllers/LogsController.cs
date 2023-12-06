@@ -29,7 +29,11 @@ namespace WildlifeLog.UI.Controllers
 				var client = httpClientFactory.CreateClient();
 
                 // Send the JWT token in the Authorization header
-                var jwtToken = HttpContext.Session.GetString("JwtToken");
+                
+				
+				
+				
+				var jwtToken = HttpContext.Session.GetString("JwtToken");
                 if (!string.IsNullOrEmpty(jwtToken))
                 {
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
@@ -49,7 +53,7 @@ namespace WildlifeLog.UI.Controllers
 				//log exception 
 			}
 
-			//retrun the list of parkDto to teh View 
+			//return the list of parkDto to the View 
 			return View(logs);
 		}
 
@@ -69,6 +73,9 @@ namespace WildlifeLog.UI.Controllers
             var parksResponse = await client.GetAsync("https://localhost:7075/api/parks");
 			var categoriesResponse = await client.GetAsync("https://localhost:7075/api/categories");
 
+			// Get the current user's username
+			var observerName = User.Identity.Name;
+
 			// Ensure success for both requests
 			parksResponse.EnsureSuccessStatusCode();
 			categoriesResponse.EnsureSuccessStatusCode();
@@ -77,11 +84,12 @@ namespace WildlifeLog.UI.Controllers
 			var parks = await parksResponse.Content.ReadFromJsonAsync<List<ParkDto>>();
 			var categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryDto>>();
 
-			// Create a view model that includes the list of parks and categories
+			// Create a view model that includes the list of parks and categories AND observer name 
 			var viewModel = new AddLogViewModel
 			{
 				Parks = parks,
-				Categories = categories
+				Categories = categories,
+				ObserverName = observerName
 			};
 
 			return View(viewModel);
@@ -183,8 +191,6 @@ namespace WildlifeLog.UI.Controllers
 			};
 
 
-			//Code brian helped me with 
-
 
             return View(viewModel);
 
@@ -259,6 +265,7 @@ namespace WildlifeLog.UI.Controllers
 
 			return View("Edit");
 		}
+
 
 		
 
