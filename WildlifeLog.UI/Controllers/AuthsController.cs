@@ -156,8 +156,7 @@ namespace WildlifeLog.UI.Controllers
 				logger.LogInformation("User successfully logged in.");
 
 
-				return View();
-				//Redirect("/Home/Index");
+				return Redirect("/Home/Index");
 
 			}
 			catch (HttpRequestException)
@@ -175,6 +174,26 @@ namespace WildlifeLog.UI.Controllers
 		}
 
 
+		[HttpPost]
+		public async Task<IActionResult> Logout()
+		{
+			try
+			{
+				// Use HttpContext.SignOutAsync to sign out the user
+				await HttpContext.SignOutAsync();
+
+				// Optionally, clear any session data or perform additional cleanup
+
+				// Redirect to the home page or another appropriate page after logout
+				return RedirectToAction("Index", "Home");
+			}
+			catch (Exception ex)
+			{
+				// Handle exceptions, log errors, or display an error message
+				logger.LogError(ex, "An unexpected error occurred during logout.");
+				return View("Error");
+			}
+		}
 
 	}
 }
