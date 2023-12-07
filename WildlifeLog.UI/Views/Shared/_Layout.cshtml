@@ -45,11 +45,10 @@
 					<div class="d-flex align-items-center">
 						@if (httpAcc.HttpContext.Session.GetString("JwtToken") != null && httpAcc.HttpContext.Session.GetString("JwtToken").Length>0)
 						{
-							<div class="me-3 text-light">
-								@User.Identity.Name
-							</div>
 
-							<p>IsAuthenticated: @isAuthenticated</p>
+							<p>Hello @httpAcc.HttpContext.Session.GetString("UserName")! </p>
+							<p>Hello @User.Identity.Name)! </p>
+
 
 							<form asp-controller="Auths" asp-action="Logout" method="post">
 								<button class="btn me-3 bg-light text-dark type="submit">Logout</button>
@@ -57,8 +56,6 @@
 						}
 						else
 						{
-							<p>IsAuthenticated: @isAuthenticated</p>
-
 		
 							<a class="btn me-3 bg-light text-dark"
 							   asp-area=""

@@ -28,19 +28,19 @@ namespace WildlifeLog.UI.Controllers
 				//create client 
 				var client = httpClientFactory.CreateClient();
 
-                // Send the JWT token in the Authorization header
-                
-				
-				
-				
+				// Send the JWT token in the Authorization header
 				var jwtToken = HttpContext.Session.GetString("JwtToken");
+
                 if (!string.IsNullOrEmpty(jwtToken))
                 {
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
                 }
 
-                //use client to talk to the API + get back all the park info 
-                var httpResponseMessage = await client.GetAsync("https://localhost:7075/api/log");
+				// Get the current user's ObserverName
+				var observerName = User.Identity.Name;
+
+				//use client to talk to the API + get back all the park info 
+				var httpResponseMessage = await client.GetAsync($"https://localhost:7075/api/log?filterOn=ObserverName&filterQuery={observerName}");
 
 				//EnsureSuccess 
 				httpResponseMessage.EnsureSuccessStatusCode();

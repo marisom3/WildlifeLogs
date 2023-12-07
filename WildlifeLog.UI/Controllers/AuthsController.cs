@@ -122,14 +122,9 @@ namespace WildlifeLog.UI.Controllers
 					new Claim(ClaimTypes.AuthenticationMethod, CookieAuthenticationDefaults.AuthenticationScheme)
 				}.Concat(roles.Select(role => new Claim(ClaimTypes.Role, role))), CookieAuthenticationDefaults.AuthenticationScheme);
 
-
-				////Claims Patels way 
-				//var userIdentity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-				//userIdentity.AddClaim(new Claim(ClaimTypes.Email, loginViewModel.Email));
-				//userIdentity.AddClaim(new Claim(ClaimTypes.Name, username));
-				//userIdentity.AddClaim(new Claim(ClaimTypes.Role, roles.ToString()));
-
-
+				// Add custom claims for additional user information
+				userIdentity.AddClaim(new Claim("JwtToken", jwtToken));
+				userIdentity.AddClaim(new Claim("Name", username));
 
 				// Use ClaimsPrincipal with the specified ClaimsIdentity
 				var principal = new ClaimsPrincipal(userIdentity);
@@ -152,6 +147,10 @@ namespace WildlifeLog.UI.Controllers
 					AllowRefresh = false
 				});
 
+				// Store user information in session
+				HttpContext.Session.SetString("JwtToken", jwtToken);
+				HttpContext.Session.SetString("UserName", username);
+
 				var claims = User.Claims.Select(c => $"{c.Type}: {c.Value}");
 				foreach (var claim in claims)
 				{
@@ -163,9 +162,9 @@ namespace WildlifeLog.UI.Controllers
 				logger.LogInformation("User successfully logged in.");
 
 				bool result = HttpContext.User.Identity.IsAuthenticated;
-				
-				return Redirect("/Home/Index");
 
+
+				return Redirect("/Logs/Index");
 			}
 			catch (HttpRequestException)
 			{
