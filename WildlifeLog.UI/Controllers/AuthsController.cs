@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
@@ -107,38 +108,44 @@ namespace WildlifeLog.UI.Controllers
 				// Deserialize the JSON response to a DTO (assuming LoginResponseDto is your DTO class)
 				var loginResponseDto = JsonSerializer.Deserialize<Models.DTO.LoginResponseDto>(response);
 
-				// Extract the JWT token from the response
+				// Extract the JWT token & username from the response
 				var jwtToken = loginResponseDto.jwtToken;
-				
-				// Specify the authentication type when creating ClaimsIdentity
-				var userIdentity = new ClaimsIdentity(new[]
+				var username = loginResponseDto.userName;
+				var roles = loginResponseDto.roles;
+
+				//// Specify the authentication type when creating ClaimsIdentity
+				var userIdentity = new ClaimsIdentity(
+					new[]
 				{
 					new Claim(ClaimTypes.Email, loginViewModel.Email),
-					//new Claim(ClaimTypes.Role, model.User.Role)
-					new Claim(ClaimTypes.AuthenticationMethod, "AuthScheme"),
-				}, "AuthScheme");
-				
-				
+					new Claim(ClaimTypes.Name, username),
+					new Claim(ClaimTypes.AuthenticationMethod, CookieAuthenticationDefaults.AuthenticationScheme)
+				}.Concat(roles.Select(role => new Claim(ClaimTypes.Role, role))), CookieAuthenticationDefaults.AuthenticationScheme);
+
+
+				////Claims Patels way 
+				//var userIdentity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+				//userIdentity.AddClaim(new Claim(ClaimTypes.Email, loginViewModel.Email));
+				//userIdentity.AddClaim(new Claim(ClaimTypes.Name, username));
+				//userIdentity.AddClaim(new Claim(ClaimTypes.Role, roles.ToString()));
+
+
+
+				// Use ClaimsPrincipal with the specified ClaimsIdentity
+				var principal = new ClaimsPrincipal(userIdentity);
+				HttpContext.User = principal;
+
 				// You may want to store the token for subsequent requests (e.g., in a secure cookie or session)
 				HttpContext.Session.SetString("JwtToken", jwtToken);
-
-
 
 				// Include the token in the Authorization header for subsequent requests
 				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
 
 
 
-
-				// Use ClaimsPrincipal with the specified ClaimsIdentity
-				var principal = new ClaimsPrincipal(userIdentity);
-
-				HttpContext.User = principal;
-
-
 				// Use SignInAsync to sign in the user
 
-				await HttpContext.SignInAsync("AuthScheme", principal, new AuthenticationProperties
+				await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties
 				{
 					ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
 					IsPersistent = false, // You can change this based on your requirements
@@ -155,7 +162,7 @@ namespace WildlifeLog.UI.Controllers
 				// Log successful login
 				logger.LogInformation("User successfully logged in.");
 
-
+				bool result = HttpContext.User.Identity.IsAuthenticated;
 				return Redirect("/Home/Index");
 
 			}
@@ -183,6 +190,8 @@ namespace WildlifeLog.UI.Controllers
 				await HttpContext.SignOutAsync();
 
 				// Optionally, clear any session data or perform additional cleanup
+				// Clear session data (optional)
+				HttpContext.Session.Clear();
 
 				// Redirect to the home page or another appropriate page after logout
 				return RedirectToAction("Index", "Home");

@@ -82,10 +82,13 @@ namespace WildlifeLogAPI.Controllers
 				if (checkPasswordResult)
 				{
 					//Create token here 
+					//get username 
+					var username = user.UserName;
+
+					
 					//Get roles for this user 
 					var roles = await userManager.GetRolesAsync(user);
 
-					
 					//if there are roles then create the token 
 					if (roles != null)
 					{
@@ -95,7 +98,9 @@ namespace WildlifeLogAPI.Controllers
 						//put that token into a dto 
 						var response = new LoginResponseDto
 						{
-							jwtToken = jwtToken
+							jwtToken = jwtToken,
+							userName = username,
+							roles = roles.ToList(),
 						};
 
 						return Ok(response);

@@ -46,16 +46,14 @@
 						@if (httpAcc.HttpContext.Session.GetString("JwtToken") != null && httpAcc.HttpContext.Session.GetString("JwtToken").Length>0)
 						{
 							<div class="me-3 text-light">
-								@User?.Identity?.Name
+								@User.Identity.Name
 							</div>
-							<form asp-controller="Auths" asp-action="Logout" method="post">
-								<button type="submit">Logout</button>
-							</form>
 
-							<p>User is logged in ~technically~</p>
-							<br />
 							<p>IsAuthenticated: @isAuthenticated</p>
-							
+
+							<form asp-controller="Auths" asp-action="Logout" method="post">
+								<button class="btn me-3 bg-light text-dark type="submit">Logout</button>
+							</form>
 						}
 						else
 						{
