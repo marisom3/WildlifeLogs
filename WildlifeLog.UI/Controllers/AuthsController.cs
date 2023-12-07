@@ -163,6 +163,7 @@ namespace WildlifeLog.UI.Controllers
 				logger.LogInformation("User successfully logged in.");
 
 				bool result = HttpContext.User.Identity.IsAuthenticated;
+				
 				return Redirect("/Home/Index");
 
 			}
