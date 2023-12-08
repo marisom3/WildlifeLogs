@@ -11,25 +11,28 @@ namespace WildlifeLogAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin, User")]
+    //[Authorize(Roles = "Admin, User")]
     public class LogController : ControllerBase
     {
         private readonly ILogRepository logRepository;
         private readonly IMapper mapper;
+		private readonly IHttpContextAccessor httpAcc;
 
-        public LogController(ILogRepository logRepository, IMapper mapper)
+		public LogController(ILogRepository logRepository, IMapper mapper, IHttpContextAccessor httpAcc)
         {
             this.logRepository = logRepository;
             this.mapper = mapper;
-        }
+			this.httpAcc = httpAcc;
+		}
 
         //localhost/api/logs/?filterOn=Name&filterQuery= *what they are searchign to filter on*/&SortBy=Date&isAscenting=true
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] string? filterOn, [FromQuery] string? filterQuery,
             [FromQuery] string? sortBy, [FromQuery] bool? isAscending)
         {
-            //Get logs domain model using repository 
-            var logsDomainModel = await logRepository.GetAllAsync(filterOn,filterQuery, sortBy, isAscending ?? true);
+			
+			//Get logs domain model using repository 
+			var logsDomainModel = await logRepository.GetAllAsync(filterOn, filterQuery, sortBy, isAscending ?? true);
 
             //Convert domain model to dto 
             var logsDto = mapper.Map<List<LogDto>>(logsDomainModel);

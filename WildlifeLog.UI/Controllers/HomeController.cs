@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 using WildlifeLog.UI.Models;
 using WildlifeLog.UI.Models.DTO;
 
@@ -19,7 +20,7 @@ namespace WildlifeLog.UI.Controllers
 
         public async Task<IActionResult> Index()
         {
-            //create list of type ParkDto 
+            //create list of type LogDto 
             List<LogDto> logs = new List<LogDto>();
 
             try
@@ -27,14 +28,22 @@ namespace WildlifeLog.UI.Controllers
                 //create client 
                 var client = httpClientFactory.CreateClient();
 
-                //use client to talk to the API + get back all the park info 
-                var httpResponseMessage = await client.GetAsync("https://localhost:7075/api/log");
+				// Send the JWT token in the Authorization header if the user is logged in
+				var jwtToken = HttpContext.Session.GetString("JwtToken");
+				if (!string.IsNullOrEmpty(jwtToken))
+				{
+					client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+				}
 
-                //EnsureSuccess 
-                httpResponseMessage.EnsureSuccessStatusCode();
+				// Make a GET request to the API to fetch all logs
+				var httpResponseMessage = await client.GetAsync("https://localhost:7075/api/log");
 
-                //Convert the JSON data to a list of ParkDto and add to the parks list 
-                logs.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<LogDto>>());
+				// Ensure that the request was successful (status code 2xx)
+				httpResponseMessage.EnsureSuccessStatusCode();
+
+				// Convert the JSON data to a list of LogDto
+				logs.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<LogDto>>());
+		
             }
             catch (Exception ex)
             {

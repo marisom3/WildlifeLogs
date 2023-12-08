@@ -44,21 +44,22 @@ namespace WildlifeLogAPI.Repositories
             return existingLog;
         }
 
-        public async Task<List<Log>> GetAllAsync(string? filterOn = null, string? filterQuery = null,
+        public async Task<List<Log>> GetAllAsync( string? filterOn = null, string? filterQuery = null,
             string? sortBy = null, bool isAscending = true)
         {
+            //get all logs 
             var logs = dbContext.Logs.Include("Park").Include("Category").AsQueryable();
 
             //Filtering 
                 //check if parameters are not null 
             if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrEmpty(filterQuery) == false)
             {
-                //check that the column is "ParkId"
-                if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                //check that the column is "ObserverName"
+                if (filterOn.Equals("ObserverName", StringComparison.OrdinalIgnoreCase))
                 {
                     //check for anything in the Park's Name column that contains the second parameter filterQuery
 
-                    logs = logs.Where(log => log.Park.Name.Contains(filterQuery));
+                    logs = logs.Where(log => log.ObserverName == filterQuery);
 
                 }
             }

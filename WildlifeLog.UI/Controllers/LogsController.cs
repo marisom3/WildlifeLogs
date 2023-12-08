@@ -5,15 +5,18 @@ using WildlifeLog.UI.Models.DTO;
 using WildlifeLog.UI.Models.ViewModels;
 using System.Net.Http.Headers;
 
+
 namespace WildlifeLog.UI.Controllers
 {
 	public class LogsController : Controller
 	{
 		private readonly IHttpClientFactory httpClientFactory;
+		private readonly IHttpContextAccessor httpAcc;
 
-		public LogsController(IHttpClientFactory httpClientFactory)
+		public LogsController(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpAcc)
 		{
 			this.httpClientFactory = httpClientFactory;
+			this.httpAcc = httpAcc;
 		}
 		
 
@@ -36,16 +39,20 @@ namespace WildlifeLog.UI.Controllers
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
                 }
 
-				// Get the current user's ObserverName
-				var observerName = User.Identity.Name;
+				// Get the current user's ObserverName from session
+				var observerName = httpAcc.HttpContext.Session.GetString("UserName");
+
+
+				// Append the username as a query parameter when making the request
+				var requestUri = $"https://localhost:7075/api/log?filterOn=ObserverName&filterQuery={observerName}";
 
 				//use client to talk to the API + get back all the park info 
-				var httpResponseMessage = await client.GetAsync($"https://localhost:7075/api/log?filterOn=ObserverName&filterQuery={observerName}");
+				var httpResponseMessage = await client.GetAsync(requestUri);
 
 				//EnsureSuccess 
 				httpResponseMessage.EnsureSuccessStatusCode();
 
-				//Convert the JSON data to a list of ParkDto and add to the parks list 
+				//Convert the JSON data to a list of LogDto and add to the log list 
 				logs.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<LogDto>>());
 			}
 			catch (Exception ex)
@@ -74,7 +81,7 @@ namespace WildlifeLog.UI.Controllers
 			var categoriesResponse = await client.GetAsync("https://localhost:7075/api/categories");
 
 			// Get the current user's username
-			var observerName = User.Identity.Name;
+			var observerName = httpAcc.HttpContext.Session.GetString("UserName");
 
 			// Ensure success for both requests
 			parksResponse.EnsureSuccessStatusCode();

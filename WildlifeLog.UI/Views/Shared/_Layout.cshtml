@@ -47,9 +47,7 @@
 						{
 
 							<p>Hello @httpAcc.HttpContext.Session.GetString("UserName")! </p>
-							<p>Hello @User.Identity.Name)! </p>
-
-
+							
 							<form asp-controller="Auths" asp-action="Logout" method="post">
 								<button class="btn me-3 bg-light text-dark type="submit">Logout</button>
 							</form>
