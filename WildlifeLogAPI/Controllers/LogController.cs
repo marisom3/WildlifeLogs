@@ -11,7 +11,7 @@ namespace WildlifeLogAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Admin, User")]
+    
     public class LogController : ControllerBase
     {
         private readonly ILogRepository logRepository;

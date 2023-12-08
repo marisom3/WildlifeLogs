@@ -73,7 +73,7 @@ namespace WildlifeLog.UI.Controllers
 
 
 		[HttpGet]
-		public IActionResult Login()
+        public IActionResult Login()
 		{
 			return View();
 		}
@@ -125,6 +125,7 @@ namespace WildlifeLog.UI.Controllers
 				// Add custom claims for additional user information
 				userIdentity.AddClaim(new Claim("JwtToken", jwtToken));
 				userIdentity.AddClaim(new Claim("Name", username));
+				
 
 				// Use ClaimsPrincipal with the specified ClaimsIdentity
 				var principal = new ClaimsPrincipal(userIdentity);
@@ -150,6 +151,7 @@ namespace WildlifeLog.UI.Controllers
 				// Store user information in session
 				HttpContext.Session.SetString("JwtToken", jwtToken);
 				HttpContext.Session.SetString("UserName", username);
+				HttpContext.Session.SetString("Roles", string.Join(",", roles));
 
 				var claims = User.Claims.Select(c => $"{c.Type}: {c.Value}");
 				foreach (var claim in claims)
@@ -202,6 +204,11 @@ namespace WildlifeLog.UI.Controllers
 				logger.LogError(ex, "An unexpected error occurred during logout.");
 				return View("Error");
 			}
+		}
+
+		public IActionResult AccessDenied()
+		{
+			return View();
 		}
 
 	}

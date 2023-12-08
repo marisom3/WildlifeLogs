@@ -46,7 +46,7 @@ namespace WildlifeLogAPI.Controllers
         //GET park by id: localhost/api/parks/{id}
         [HttpGet]
         [Route("{id:Guid}")]
-        [Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin")]
 
 
         public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)

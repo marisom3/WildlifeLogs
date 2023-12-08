@@ -1,8 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims;
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpAcc
 
 @{
-	bool isAuthenticated = User.Identity.IsAuthenticated;
+	var roles = httpAcc.HttpContext.Session.GetString("Roles")?.Split(",");
+	var jwtToken = httpAcc.HttpContext.Session.GetString("JwtToken");
 }
 
 <!DOCTYPE html>
@@ -29,32 +31,41 @@
 						<li class="nav-item">
 							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Parks" asp-action="Index">Parks</a>
-						</li>
-						<li>
-							<a class="nav-link text-dark" asp-area="" asp-controller="Logs" asp-action="Index">Your Logs</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="AdminUsers" asp-action="Index">Users</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-						</li>
+						
+						@if (jwtToken != null && roles != null && roles.Contains("Admin"))
+						{
+							<li>
+								<a class="nav-link text-dark" asp-area="" asp-controller="Logs" asp-action="Index">Your Logs</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link text-dark" asp-area="" asp-controller="Parks" asp-action="Index">Parks</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link text-dark" asp-area="" asp-controller="AdminUsers" asp-action="Index">Users</a>
+							</li>
+						}
+						@if (jwtToken != null && roles != null && roles.Contains("User"))
+						{
+							<li>
+								<a class="nav-link text-dark" asp-area="" asp-controller="Logs" asp-action="Index">Your Logs</a>
+							</li>
+							
+						}
+
 					</ul>
 					<div class="d-flex align-items-center">
-						@if (httpAcc.HttpContext.Session.GetString("JwtToken") != null && httpAcc.HttpContext.Session.GetString("JwtToken").Length>0)
+						@if (jwtToken != null && jwtToken.Length > 0)
 						{
 
 							<p>Hello @httpAcc.HttpContext.Session.GetString("UserName")! </p>
-							
+
 							<form asp-controller="Auths" asp-action="Logout" method="post">
 								<button class="btn me-3 bg-light text-dark type="submit">Logout</button>
 							</form>
 						}
 						else
 						{
-		
+
 							<a class="btn me-3 bg-light text-dark"
 							   asp-area=""
 							   asp-controller="Auths"

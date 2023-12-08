@@ -9,6 +9,8 @@ namespace WildlifeLogAPI.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+
+
 	public class AuthController : ControllerBase
 	{
 		private readonly UserManager<IdentityUser> userManager;

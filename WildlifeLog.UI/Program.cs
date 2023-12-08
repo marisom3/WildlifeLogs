@@ -44,8 +44,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 //inject cloudinary 
 builder.Services.AddScoped<IImageRepository, CloudinaryImageRepository>();
 
-////////////////////////////////////////////////////////////
-///
 
 // Configure authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -56,10 +54,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 	options.Cookie.HttpOnly = true;
 	options.Cookie.IsEssential = true;
 	options.SlidingExpiration = true;
-	options.LoginPath = "/";
-	options.Cookie.Path ="/";
+	options.LoginPath = "/Auths/Login";
+	options.Cookie.Path = "/Auths/Login"; 
 	options.AccessDeniedPath = "/Auths/AccessDenied";
-	options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 	options.Cookie.SameSite = SameSiteMode.None;
 
 

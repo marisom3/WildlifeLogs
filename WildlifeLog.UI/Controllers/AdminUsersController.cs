@@ -1,5 +1,6 @@
 ﻿using Azure;
 using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Text;
@@ -11,6 +12,7 @@ using WildlifeLog.UI.Models.ViewModels;
 
 namespace WildlifeLog.UI.Controllers
 {
+
     public class AdminUsersController : Controller
     {
 
@@ -52,9 +54,9 @@ namespace WildlifeLog.UI.Controllers
 
 
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
-                //log exception 
+                return RedirectToAction("AccessDenied", "Auths");
             }
 
             return View(users);
@@ -63,87 +65,103 @@ namespace WildlifeLog.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(CreateUserDto createUserDto)
         {
-
-            // Create a HttpClient
-            var client = httpClientFactory.CreateClient();
-
-            // Send the JWT token in the Authorization header
-            var jwtToken = HttpContext.Session.GetString("JwtToken");
-            if (!string.IsNullOrEmpty(jwtToken))
+            try
             {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+                // Create a HttpClient
+                var client = httpClientFactory.CreateClient();
+
+                // Send the JWT token in the Authorization header
+                var jwtToken = HttpContext.Session.GetString("JwtToken");
+                if (!string.IsNullOrEmpty(jwtToken))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+                }
+
+                // Initialize Roles to an empty list if it's null
+                if (createUserDto.Roles == null)
+                {
+                    createUserDto.Roles = new List<string>();
+                }
+
+                // Set the default role to "User" if the "Admin" checkbox is not checked
+                if (!createUserDto.Roles.Contains("Admin"))
+                {
+                    createUserDto.Roles = new List<string> { "User" };
+                }
+
+                //Create httprequestmessage 
+                var httpRequestMessage = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri("https://localhost:7075/api/users"),
+                    Content = new StringContent(JsonSerializer.Serialize(createUserDto), Encoding.UTF8, "application/json")
+                };
+
+                //Use the client to sent the httt request message to the api 
+                var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+
+                //Make sure it's a success 
+                httpResponseMessage.EnsureSuccessStatusCode();
+
+                //convert json response to  Dto object 
+                var response = await httpResponseMessage.Content.ReadFromJsonAsync<UsersDto>();
+
+                if (response is not null)
+                {
+                    return RedirectToAction("Index", "AdminUsers");
+                }
+
+                //otherwise return view 
+                return View();
             }
-
-            // Initialize Roles to an empty list if it's null
-            if (createUserDto.Roles == null)
+            catch (HttpRequestException ex)
             {
-                createUserDto.Roles = new List<string>();
+                return RedirectToAction("AccessDenied", "Auths");
             }
-
-            // Set the default role to "User" if the "Admin" checkbox is not checked
-            if (!createUserDto.Roles.Contains("Admin"))
-            {
-                createUserDto.Roles = new List<string> { "User" };
-            }
-
-            //Create httprequestmessage 
-            var httpRequestMessage = new HttpRequestMessage()
-            {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri("https://localhost:7075/api/users"),
-                Content = new StringContent(JsonSerializer.Serialize(createUserDto), Encoding.UTF8, "application/json")
-            };
-
-            //Use the client to sent the httt request message to the api 
-            var httpResponseMessage = await client.SendAsync(httpRequestMessage);
-
-            //Make sure it's a success 
-            httpResponseMessage.EnsureSuccessStatusCode();
-           
-            //convert json response to  Dto object 
-            var response = await httpResponseMessage.Content.ReadFromJsonAsync<UsersDto>();
-
-            if (response is not null)
-            {
-                return RedirectToAction("Index", "AdminUsers");
-            }
-            
-            //otherwise return view 
-            return View();
         }
+
 
         [HttpGet]
-        public async Task<IActionResult>Edit(Guid id)
+        public async Task<IActionResult> Edit(Guid id)
         {
-            //create client 
-            var client = httpClientFactory.CreateClient();
-
-            // Send the JWT token in the Authorization header
-            var jwtToken = HttpContext.Session.GetString("JwtToken");
-            if (!string.IsNullOrEmpty(jwtToken))
+            try
             {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+                //create client 
+                var client = httpClientFactory.CreateClient();
+
+                // Send the JWT token in the Authorization header
+                var jwtToken = HttpContext.Session.GetString("JwtToken");
+                if (!string.IsNullOrEmpty(jwtToken))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+                }
+
+                //use client to get the data from teh api
+                //we send it to that url and include the id 
+                //also we convert the response from JSON to User Dto 
+                var response = await client.GetFromJsonAsync<UpdateUserDto>($"https://localhost:7075/api/Users/{id.ToString()}");
+
+                //if the response is not null aka we were able to grab the park by its id,
+                //return it to the view 
+                if (response != null)
+                {
+                    return View(response);
+                }
+
+                //otherwise just retun to the view 
+                return View();
+            }
+            catch (HttpRequestException ex)
+            {
+                return RedirectToAction("AccessDenied", "Auths");
             }
 
-            //use client to get the data from teh api
-            //we send it to that url and include the id 
-            //also we convert the response from JSON to User Dto 
-            var response = await client.GetFromJsonAsync<UpdateUserDto>($"https://localhost:7075/api/Users/{id.ToString()}");
-
-            //if the response is not null aka we were able to grab the park by its id,
-            //return it to the view 
-            if (response != null)
-            {
-                return View(response);
-            }
-
-            //otherwise just retun to the view 
-            return View();
 
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> Edit (UpdateUserDto updateUserDto)
+        public async Task<IActionResult> Edit(UpdateUserDto updateUserDto)
         {
             //create client 
             var client = httpClientFactory.CreateClient();
@@ -157,23 +175,23 @@ namespace WildlifeLog.UI.Controllers
 
             // Initialize Roles to an empty list if it's null
             if (updateUserDto.Roles == null)
-			{
-				updateUserDto.Roles = new List<string>();
-			}
+            {
+                updateUserDto.Roles = new List<string>();
+            }
 
-			// Set the default role to "User" if the "Admin" checkbox is not checked
-			if (!updateUserDto.Roles.Contains("Admin"))
-			{
-				updateUserDto.Roles = new List<string> { "User" };
-			}
+            // Set the default role to "User" if the "Admin" checkbox is not checked
+            if (!updateUserDto.Roles.Contains("Admin"))
+            {
+                updateUserDto.Roles = new List<string> { "User" };
+            }
 
-			//create httpRequestMessage 
-			var httpRequestMessage = new HttpRequestMessage()
-			{
-				Method = HttpMethod.Put,
-				RequestUri = new Uri($"https://localhost:7075/api/Users/{updateUserDto.Id}"),
-				Content = new StringContent(JsonSerializer.Serialize(updateUserDto), Encoding.UTF8, "application/json")
-			};
+            //create httpRequestMessage 
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Put,
+                RequestUri = new Uri($"https://localhost:7075/api/Users/{updateUserDto.Id}"),
+                Content = new StringContent(JsonSerializer.Serialize(updateUserDto), Encoding.UTF8, "application/json")
+            };
 
             //use client to send teh reuest to teh api 
             var httpResponseMessage = await client.SendAsync(httpRequestMessage);
@@ -189,15 +207,16 @@ namespace WildlifeLog.UI.Controllers
                 return RedirectToAction("Index", "AdminUsers");
             }
 
-			return View();
+            return View();
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> Delete (Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-			try
-			{
-				var client = httpClientFactory.CreateClient();
+            try
+            {
+                var client = httpClientFactory.CreateClient();
 
                 // Send the JWT token in the Authorization header
                 var jwtToken = HttpContext.Session.GetString("JwtToken");
@@ -208,18 +227,18 @@ namespace WildlifeLog.UI.Controllers
 
                 var httpResponseMessage = await client.DeleteAsync($"https://localhost:7075/api/Users/{id.ToString()}");
 
-				httpResponseMessage.EnsureSuccessStatusCode();
+                httpResponseMessage.EnsureSuccessStatusCode();
 
-				return RedirectToAction("Index", "AdminUsers");
-			}
-			catch (Exception ex)
-			{
-				// Console
+                return RedirectToAction("Index", "AdminUsers");
+            }
+            catch (Exception ex)
+            {
+                // Console
 
-			}
+            }
 
-			return View("Edit");
-		}
+            return View("Edit");
+        }
 
     }
 
