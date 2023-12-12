@@ -1,6 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
@@ -38,10 +36,10 @@ namespace WildlifeLog.UI.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
 		{
-			//Created client 
+			// Created client 
 			var client = httpClientFactory.CreateClient();
 
-			//create httpRequestMessage
+			// create httpRequestMessage
 			var httpRequestMessage = new HttpRequestMessage()
 			{
 				Method = HttpMethod.Post,
@@ -49,31 +47,27 @@ namespace WildlifeLog.UI.Controllers
 				Content = new StringContent(JsonSerializer.Serialize(registerViewModel), Encoding.UTF8, "application/json")
 			};
 
-
-			//use cleint to send httpRequestMessage to api and we get a json response abck 
+			// use client to send httpRequestMessage to api and we get a json response abck 
 			var httpResponseMessage = await client.SendAsync(httpRequestMessage);
 
-			//Ensure success 
+			// Ensure success 
 			httpResponseMessage.EnsureSuccessStatusCode();
 
-			//"Read the body" as as tring DONT Convert form JSON to Dto 
+			// "Read the body" as a string DONT convert form JSON to Dto 
 			var response = await httpResponseMessage.Content.ReadAsStringAsync();
 
-			//If successful, redirect to ? 
+			// If successful, redirect to ? 
 			if (response != null)
 			{
 				return RedirectToAction("Index", "Home");
 			}
 
-			//else just return to view 
+			// else just return to view 
 			return View();
-
-
 		}
 
-
 		[HttpGet]
-        public IActionResult Login()
+		public IActionResult Login()
 		{
 			return View();
 		}
@@ -83,12 +77,10 @@ namespace WildlifeLog.UI.Controllers
 		{
 			try
 			{
-
-				//create the client 
+				// create the client 
 				var client = httpClientFactory.CreateClient();
 
-
-				//create httpRequestMessage
+				// create httpRequestMessage
 				var httpRequestMessage = new HttpRequestMessage()
 				{
 					Method = HttpMethod.Post,
@@ -96,77 +88,58 @@ namespace WildlifeLog.UI.Controllers
 					Content = new StringContent(JsonSerializer.Serialize(loginViewModel), Encoding.UTF8, "application/json")
 				};
 
-				//use cleint to send httpRequestMessage to api and we get a json response abck 
+				// use client to send httpRequestMessage to api and we get a json response back 
 				var httpResponseMessage = await client.SendAsync(httpRequestMessage);
 
-				//Ensure success 
+				// Ensure success 
 				httpResponseMessage.EnsureSuccessStatusCode();
 
-				//"Read the Response body" as a string
+				// "Read the body" as a string
 				var response = await httpResponseMessage.Content.ReadAsStringAsync();
 
 				// Deserialize the JSON response to a DTO (assuming LoginResponseDto is your DTO class)
 				var loginResponseDto = JsonSerializer.Deserialize<Models.DTO.LoginResponseDto>(response);
 
-				// Extract the JWT token & username from the response
+				// Extract the JWT token from the response
 				var jwtToken = loginResponseDto.jwtToken;
-				var username = loginResponseDto.userName;
-				var roles = loginResponseDto.roles;
 
-				//// Specify the authentication type when creating ClaimsIdentity
-				var userIdentity = new ClaimsIdentity(
-					new[]
-				{
-					new Claim(ClaimTypes.Email, loginViewModel.Email),
-					new Claim(ClaimTypes.Name, username),
-					new Claim(ClaimTypes.AuthenticationMethod, CookieAuthenticationDefaults.AuthenticationScheme)
-				}.Concat(roles.Select(role => new Claim(ClaimTypes.Role, role))), CookieAuthenticationDefaults.AuthenticationScheme);
-
-				// Add custom claims for additional user information
-				userIdentity.AddClaim(new Claim("JwtToken", jwtToken));
-				userIdentity.AddClaim(new Claim("Name", username));
-				
-
-				// Use ClaimsPrincipal with the specified ClaimsIdentity
-				var principal = new ClaimsPrincipal(userIdentity);
-				HttpContext.User = principal;
-
-				// You may want to store the token for subsequent requests (e.g., in a secure cookie or session)
+				// Store the token for subsequent requests (consider more secure storage options)
 				HttpContext.Session.SetString("JwtToken", jwtToken);
 
 				// Include the token in the Authorization header for subsequent requests
 				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
 
-
+				// Specify the authentication type when creating ClaimsIdentity
+				var userIdentity = new ClaimsIdentity(new[]
+				{
+					new Claim(ClaimTypes.Email, loginViewModel.Email),
+                    new Claim(ClaimTypes.Name, loginResponseDto.userName),
+                    new Claim(ClaimTypes.AuthenticationMethod, "AuthScheme"),
+				}, "AuthScheme");
+                
+				// Add roles to claims if the user has roles
+                if (loginResponseDto.roles != null && loginResponseDto.roles.Any())
+                {
+                    foreach (var role in loginResponseDto.roles)
+                    {
+                        userIdentity.AddClaim(new Claim(ClaimTypes.Role, role));
+                    }
+                }
+                // Use ClaimsPrincipal with the specified ClaimsIdentity
+                var user = new ClaimsPrincipal(userIdentity);
 
 				// Use SignInAsync to sign in the user
-
-				await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties
+				await HttpContext.SignInAsync("AuthScheme", user, new AuthenticationProperties
 				{
 					ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
 					IsPersistent = false, // You can change this based on your requirements
 					AllowRefresh = false
 				});
 
-				// Store user information in session
-				HttpContext.Session.SetString("JwtToken", jwtToken);
-				HttpContext.Session.SetString("UserName", username);
-				HttpContext.Session.SetString("Roles", string.Join(",", roles));
-
-				var claims = User.Claims.Select(c => $"{c.Type}: {c.Value}");
-				foreach (var claim in claims)
-				{
-					logger.LogInformation(claim);
-				}
-
-
 				// Log successful login
 				logger.LogInformation("User successfully logged in.");
 
-				bool result = HttpContext.User.Identity.IsAuthenticated;
-
-
-				return Redirect("/Logs/Index");
+				return RedirectToAction("Index", "Logs");
 			}
 			catch (HttpRequestException)
 			{
@@ -183,33 +156,35 @@ namespace WildlifeLog.UI.Controllers
 		}
 
 
-		[HttpPost]
-		public async Task<IActionResult> Logout()
-		{
-			try
-			{
-				// Use HttpContext.SignOutAsync to sign out the user
-				await HttpContext.SignOutAsync();
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                // Use HttpContext.SignOutAsync to sign out the user
+                await HttpContext.SignOutAsync();
 
-				// Optionally, clear any session data or perform additional cleanup
-				// Clear session data (optional)
-				HttpContext.Session.Clear();
+                // Optionally, clear any session data or perform additional cleanup
+                // Clear session data (optional)
+                HttpContext.Session.Clear();
 
-				// Redirect to the home page or another appropriate page after logout
-				return RedirectToAction("Index", "Home");
-			}
-			catch (Exception ex)
-			{
-				// Handle exceptions, log errors, or display an error message
-				logger.LogError(ex, "An unexpected error occurred during logout.");
-				return View("Error");
-			}
-		}
+                // Redirect to the home page or another appropriate page after logout
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions, log errors, or display an error message
+                logger.LogError(ex, "An unexpected error occurred during logout.");
+                return View("Error");
+            }
+        }
 
-		public IActionResult AccessDenied()
-		{
-			return View();
-		}
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
 
-	}
+    }
 }
+
+
