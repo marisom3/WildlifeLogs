@@ -5,7 +5,10 @@ namespace WildlifeLog.UI.Models.ViewModels
 {
     public class AddLogViewModel
     {
-
+        public AddLogViewModel()
+        {
+            Date = DateTime.Now;
+        }
         [Required]
         [MaxLength(100)]
         public string ObserverName { get; set; }

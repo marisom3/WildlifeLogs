@@ -278,7 +278,7 @@ namespace WildlifeLog.UI.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Delete(LogDto request)
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
@@ -291,7 +291,7 @@ namespace WildlifeLog.UI.Controllers
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
                 }
 
-                var httpResponseMessage = await client.DeleteAsync($"https://localhost:7075/api/log/{request.Id}");
+                var httpResponseMessage = await client.DeleteAsync($"https://localhost:7075/api/log/{id}");
 
                 httpResponseMessage.EnsureSuccessStatusCode();
 
@@ -304,9 +304,6 @@ namespace WildlifeLog.UI.Controllers
             }
 
         }
-
-
-
 
     }
 }
