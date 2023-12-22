@@ -5,50 +5,32 @@
 
 <h2>All WildlifeLogs</h2>
 
-
 <div class="d-flex justify-content-end">
-    <a class="btn btn-secondary" asp-controller="Logs" asp-action="Add">Add Log</a>
+    <a class="btn btn-primary mb-3" asp-controller="Logs" asp-action="Add">Add Log</a>
+</div>
+
+<div class="row">
+
+	@foreach (var log in Model)
+	{
+		<div class="col-sm-6 col-lg-3 mb-4">
+			<div class="card ">
+				<img src="@log.LogImageUrl" id="logImageDisplay" class=" card-img-top"
+					 style="height: 300px; object-fit: cover;" alt="">
+				<div class="card-body">
+					<h5 class="card-title">@log.Species</h5>
+					<p class="card-text text-end mb-2" style="height:40px">
+						@log.Park.Name
+						<br>
+						@log.Date.ToShortDateString()
+					</p>
+				</div>
+
+			</div>
+		</div>
+	}
+
 </div>
 
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-			<th>Image</th>
-            <th>Observer's Name</th>
-            <th>Date</th>
-            <th>Confidence</th>
-            <th>Species</th>
-            <th>Count</th>
-            <th>Description</th>
-            <th>Location</th>
-            <th>Park</th>
-            <th>Animal Type</th>
-          
-            <th> </th>                                                                                                                              
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var log in Model)
-        {
-            <tr>
-				<td><img src="@log.LogImageUrl" id="logImageDisplay" style="display:block;width:300px;" /></td>
-                <td>@log.ObserverName</td>
-                <td>@log.Date</td>
-                <td>@log.Confidence</td>
-                <td>@log.Species</td>
-                <td>@log.Count</td>
-                <td>@log.Description</td>
-                <td>@log.Location</td>
-                <td>@log.Park.Name</td>
-                <td>@log.Category.Name</td>
-               
-                <td>
-                    <a asp-controller="Logs" asp-action="Edit" asp-route-id="@log.Id" class="btn btn-light">Edit</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-                
+@*<a asp-controller="Logs" asp-action="Edit" asp-route-id="@log.Id" class="btn btn-light">Edit</a>                *@

@@ -43,12 +43,12 @@
 						}
 
 					</ul>
-					<div class="d-flex align-items-center">
+					<div class="d-flex align-items-center justify-content-center">
 						@if (User.Identity.IsAuthenticated)
 						{
-							<div class="me-3 text-dark">
+							<div class=" me-3 text-dark">
 								<p>
-									@User?.Identity?.Name
+									Hello @User?.Identity?.Name!
 								</p>
 
 							</div>
