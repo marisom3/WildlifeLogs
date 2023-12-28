@@ -6,58 +6,68 @@
 <h2>All WildlifeLogs</h2>
 
 <div class="d-flex justify-content-end">
-    <a class="btn btn-primary mb-3" asp-controller="Logs" asp-action="Add">Add Log</a>
+	<a class="btn btn-primary mb-3" asp-controller="Logs" asp-action="Add">Add Log</a>
 </div>
 
 <div class="row">
 
 	@foreach (var log in Model)
 	{
-        <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card" data-bs-toggle="modal" data-bs-target="#logModal_@log.Id">
-                <img src="@log.LogImageUrl" class="card-img-top" style="height: 300px; object-fit: cover;" alt="">
-                <div class="card-body">
-                    <h5 class="card-title">@log.Species</h5>
-                    <p class="card-text text-end mb-2" style="height:50px">
-                        @log.Park.Name
-                        <br>
-                        @log.Date.ToShortDateString()
-                    </p>
-                </div>
-            </div>
-        </div>
+		<div class="col-md-6 col-lg-3 mb-4">
+			<div class="card" data-bs-toggle="modal" data-bs-target="#logModal_@log.Id">
+				<img src="@log.LogImageUrl" class="card-img-top" style="height: 300px; object-fit: cover;" alt="">
+				<div class="card-body">
+					<h5 class="card-title">@log.Species</h5>
+					<p class="card-text text-end mb-2" style="height:50px">
+						@log.Park.Name
+						<br>
+						@log.Date.ToShortDateString()
+					</p>
+				</div>
+			</div>
+		</div>
 
-        <!-- Modal -->
-        <div class="modal fade" id="logModal_@log.Id">
-            <div class="modal-dialog modal-lg mt-7">
-                <div class="modal-content p-5">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5">
-                            @log.Species
-                        </h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <img src="@log.LogImageUrl" class="img-fluid mb-3" alt="">
-                        <p>Observer: @log.ObserverName</p>
-                        <p>Date Observed: @log.Date.ToShortDateString()</p>
-                        <p>Park: @log.Park.Name</p>
-                        <p>Animal Group: @log.Category.Name</p>
-                        <p>Confident in Id? @log.Confidence</p>
-                        <p>Count: @log.Count</p>
-                        <p>Description: @log.Description</p>
-                        <p>Location: @log.Location</p>
-                        <p>Comments: @log.Comments</p>
+		<!-- Modal -->
+		<div class="modal fade" id="logModal_@log.Id">
+			<div class="modal-dialog modal-lg mt-7">
+				<div class="modal-content p-5">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5">
+							@log.Species
+							
+						</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-6">
 
-                        <a asp-controller="Logs" asp-action="Edit" asp-route-id="@log.Id" class="btn btn-primary">Edit</a>
-                        <form method="post" action="@Url.Action("Delete", "Logs", new { id = log.Id })">
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
+								<img src="@log.LogImageUrl" class="img-fluid mb-3" alt="">
+								<p><em>Observed by  @log.ObserverName on  @log.Date.ToShortDateString() at @log.Park.Name</em></p>
+							</div>
+							<div class="col-md-6">
+								<p><b>Species Identified:</b> @log.Species</p>
+								<p><b>Confident in Id?</b> @log.Confidence</p>
+								<p><b>Animal Group:</b> @log.Category.Name</p>
+								<p><b>Count:</b> @log.Count</p>
+								<p><b>Description: </b>@log.Description</p>
+								<p><b>GPS Location: </b>@log.Location</p>
+								<p><b>Park:</b> @log.Park.Name</p>
+								<p><b>Comments: </b> @log.Comments</p>
 
-                    </div>
-                </div>
-            </div>
-        </div>
+								<div class="d-flex">
+								<a asp-controller="Logs" asp-action="Edit" asp-route-id="@log.Id" class="btn btn-primary me-4">Edit</a>
+								<form method="post" action="@Url.Action("Delete", "Logs", new { id = log.Id })">
+									<button type="submit" class="btn btn-danger">Delete</button>
+								</form>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
 	}
 
 </div>

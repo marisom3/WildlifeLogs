@@ -43,8 +43,10 @@ namespace WildlifeLog.UI.Controllers
 
 				// Convert the JSON data to a list of LogDto
 				logs.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<LogDto>>());
-		
-            }
+
+				// Sort logs in descending order based on the Date property
+				logs = logs.OrderByDescending(log => log.Date).ToList();
+			}
             catch (Exception ex)
             {
                 //log exception 

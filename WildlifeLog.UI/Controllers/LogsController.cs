@@ -5,305 +5,286 @@ using WildlifeLog.UI.Models.DTO;
 using WildlifeLog.UI.Models.ViewModels;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Identity;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace WildlifeLog.UI.Controllers
 {
-    public class LogsController : Controller
-    {
-        private readonly IHttpClientFactory httpClientFactory;
-      
-        public LogsController(IHttpClientFactory httpClientFactory)
-        {
-            this.httpClientFactory = httpClientFactory;
-            
-        }
+	public class LogsController : Controller
+	{
+		private readonly IHttpClientFactory httpClientFactory;
+
+		public LogsController(IHttpClientFactory httpClientFactory)
+		{
+			this.httpClientFactory = httpClientFactory;
+
+		}
 
 
-        [HttpGet]
-        public async Task<IActionResult> Index()
-        {
-            //create list of type LogDto
-            List<LogDto> logs = new List<LogDto>();
+		[HttpGet]
+		public async Task<IActionResult> Index()
+		{
+			//create list of type LogDto
+			List<LogDto> logs = new List<LogDto>();
 
-            try
-            {
-                //create client 
-                var client = httpClientFactory.CreateClient();
+			try
+			{
+				//create client 
+				var client = httpClientFactory.CreateClient();
 
-                // Send the JWT token in the Authorization header
-                var jwtToken = HttpContext.Session.GetString("JwtToken");
+				// Send the JWT token in the Authorization header
+				var jwtToken = HttpContext.Session.GetString("JwtToken");
 
-                if (!string.IsNullOrEmpty(jwtToken))
-                {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-                }
+				if (!string.IsNullOrEmpty(jwtToken))
+				{
+					client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+				}
 
-                // Get the current user's ObserverName from session
-                var observerName = User.Identity.Name;
+				// Get the current user's ObserverName from session
+				var observerName = User.Identity.Name;
 
 
 				// Append the username as a query parameter when making the request
 				var requestUri = $"https://localhost:7075/api/log?filterOn=ObserverName&filterQuery={observerName}";
 
-                //use client to talk to the API + get back all the park info 
-                var httpResponseMessage = await client.GetAsync(requestUri);
+				//use client to talk to the API + get back all the park info 
+				var httpResponseMessage = await client.GetAsync(requestUri);
 
-                //EnsureSuccess 
-                httpResponseMessage.EnsureSuccessStatusCode();
+				//EnsureSuccess 
+				httpResponseMessage.EnsureSuccessStatusCode();
 
-                //Convert the JSON data to a list of LogDto and add to the log list 
-                logs.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<LogDto>>());
-            }
-            catch (Exception ex)
-            {
-                return RedirectToAction("AccessDenied", "Auth");
-            }
+				//Convert the JSON data to a list of LogDto and add to the log list 
+				logs.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<LogDto>>());
 
-            //return the list of parkDto to the View 
-            return View(logs);
-        }
+				// Sort logs in descending order based on the Date property
+				logs = logs.OrderByDescending(log => log.Date).ToList();
+			}
+			catch (Exception ex)
+			{
+				//log exception
+			}
 
-        [HttpGet]
-        public async Task<IActionResult> Add()
-        {
-            try
-            {
-                //Create client 
-                var client = httpClientFactory.CreateClient();
+			//return the list of parkDto to the View 
+			return View(logs);
+		}
 
-                // Send the JWT token in the Authorization header
-                var jwtToken = HttpContext.Session.GetString("JwtToken");
-                if (!string.IsNullOrEmpty(jwtToken))
-                {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-                }
-                //Fetch the list of parks and categories 
-                var parksResponse = await client.GetAsync("https://localhost:7075/api/parks");
-                var categoriesResponse = await client.GetAsync("https://localhost:7075/api/categories");
+		[HttpGet]
+		[Authorize(Roles = "User, Admin")]
+		public async Task<IActionResult> Add()
+		{
 
-                // Get the current user's username
-                var observerName = User.Identity.Name;
+			//Create client 
+			var client = httpClientFactory.CreateClient();
 
-				// Ensure success for both requests
-				parksResponse.EnsureSuccessStatusCode();
-                categoriesResponse.EnsureSuccessStatusCode();
+			// Send the JWT token in the Authorization header
+			var jwtToken = HttpContext.Session.GetString("JwtToken");
+			if (!string.IsNullOrEmpty(jwtToken))
+			{
+				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+			}
+			//Fetch the list of parks and categories 
+			var parksResponse = await client.GetAsync("https://localhost:7075/api/parks");
+			var categoriesResponse = await client.GetAsync("https://localhost:7075/api/categories");
 
-                // Convert JSON responses to lists of ParkDto and CategoryDto
-                var parks = await parksResponse.Content.ReadFromJsonAsync<List<ParkDto>>();
-                var categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryDto>>();
+			// Get the current user's username
+			var observerName = User.Identity.Name;
 
-                // Create a view model that includes the list of parks and categories AND observer name 
-                var viewModel = new AddLogViewModel
-                {
-                    Parks = parks,
-                    Categories = categories,
-                    ObserverName = observerName
-                };
+			// Ensure success for both requests
+			parksResponse.EnsureSuccessStatusCode();
+			categoriesResponse.EnsureSuccessStatusCode();
 
-                return View(viewModel);
-            }
-            catch (HttpRequestException ex)
-            {
-                return RedirectToAction("AccessDenied", "Auths");
-            }
+			// Convert JSON responses to lists of ParkDto and CategoryDto
+			var parks = await parksResponse.Content.ReadFromJsonAsync<List<ParkDto>>();
+			var categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryDto>>();
 
-        }
+			// Create a view model that includes the list of parks and categories AND observer name 
+			var viewModel = new AddLogViewModel
+			{
+				Parks = parks,
+				Categories = categories,
+				ObserverName = observerName
+			};
 
-        [HttpPost]
-
-        public async Task<IActionResult> Add(AddLogViewModel addLogViewModel)
-        {
-            try
-            {
-                //Create client 
-                var client = httpClientFactory.CreateClient();
-
-                // Send the JWT token in the Authorization header
-                var jwtToken = HttpContext.Session.GetString("JwtToken");
-                if (!string.IsNullOrEmpty(jwtToken))
-                {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-                }
-
-                //create httpRequestMessage object
-                var httpRequestMessage = new HttpRequestMessage()
-                {
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri("https://localhost:7075/api/log"),
-                    Content = new StringContent(JsonSerializer.Serialize(addLogViewModel), Encoding.UTF8, "application/json")
-                };
-
-                //Use the client to sent the httt request message to the api 
-                var httpResponseMessage = await client.SendAsync(httpRequestMessage);
-
-                //Make sure it's a success 
-                httpResponseMessage.EnsureSuccessStatusCode();
-
-                //convert json response to Region Dto object 
-                var response = await httpResponseMessage.Content.ReadFromJsonAsync<LogDto>();
-
-                //if sucessful redirect to 
-                if (response is not null)
-                {
-                    return RedirectToAction("Index", "Logs");
-                }
-
-                //otherwise return view 
-                return View();
-            }
-            catch (HttpRequestException ex)
-            {
-                return RedirectToAction("AccessDenied", "Auths");
-            }
+			return View(viewModel);
 
 
-        }
+		}
 
-        [HttpGet]
-        public async Task<IActionResult> Edit(Guid id)
-        {
-            try
-            {
-                //create client 
-                var client = httpClientFactory.CreateClient();
+		[HttpPost]
+		[Authorize(Roles = "User, Admin")]
 
-                // Send the JWT token in the Authorization header
-                var jwtToken = HttpContext.Session.GetString("JwtToken");
-                if (!string.IsNullOrEmpty(jwtToken))
-                {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-                }
+		public async Task<IActionResult> Add(AddLogViewModel addLogViewModel)
+		{
 
-                //use client to get the log data from the api 
-                var log = await client.GetFromJsonAsync<LogDto>($"https://localhost:7075/api/log/{id.ToString()}");
+			//Create client 
+			var client = httpClientFactory.CreateClient();
 
+			// Send the JWT token in the Authorization header
+			var jwtToken = HttpContext.Session.GetString("JwtToken");
+			if (!string.IsNullOrEmpty(jwtToken))
+			{
+				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+			}
 
-                //if you get something by the id, then return it to the view
-                if (log is null)
-                {
-                    return View();
+			//create httpRequestMessage object
+			var httpRequestMessage = new HttpRequestMessage()
+			{
+				Method = HttpMethod.Post,
+				RequestUri = new Uri("https://localhost:7075/api/log"),
+				Content = new StringContent(JsonSerializer.Serialize(addLogViewModel), Encoding.UTF8, "application/json")
+			};
 
-                }
+			//Use the client to sent the httt request message to the api 
+			var httpResponseMessage = await client.SendAsync(httpRequestMessage);
 
-                // Fetch the lists of parks and categories just like in your Add method
-                var parksResponse = await client.GetAsync("https://localhost:7075/api/parks");
-                var categoriesResponse = await client.GetAsync("https://localhost:7075/api/categories");
+			//Make sure it's a success 
+			httpResponseMessage.EnsureSuccessStatusCode();
 
-                //Make sure its a success?
-                parksResponse.EnsureSuccessStatusCode();
-                categoriesResponse.EnsureSuccessStatusCode();
+			//convert json response to Region Dto object 
+			var response = await httpResponseMessage.Content.ReadFromJsonAsync<LogDto>();
 
-                //use the client to convert the Json response form the API to a list of the DTOs
-                var parks = await parksResponse.Content.ReadFromJsonAsync<List<ParkDto>>();
-                var categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryDto>>();
+			//if sucessful redirect to 
+			if (response is not null)
+			{
+				return RedirectToAction("Index", "Logs");
+			}
 
-                //
-                var viewModel = new UpdateLogViewModel
-                {
-                    ObserverName = log.ObserverName,
-                    Date = log.Date,
-                    Confidence = log.Confidence,
-                    Species = log.Species,
-                    Count = log.Count,
-                    Description = log.Description,
-                    Location = log.Location,
-                    LogImageUrl = log.LogImageUrl,
-                    Comments = log.Comments,
-                    CategoryId = log.CategoryId,
-                    ParkId = log.ParkId,
-                    Parks = parks,
-                    Categories = categories
-                };
+			//otherwise return view 
+			return View();
 
+		}
 
+		[HttpGet]
+		[Authorize(Roles = "User, Admin")]
+		public async Task<IActionResult> Edit(Guid id)
+		{
 
-                return View(viewModel);
-            }
-            catch (HttpRequestException ex)
-            {
-                return RedirectToAction("AccessDenied", "Auths");
-            }
+			//create client 
+			var client = httpClientFactory.CreateClient();
+
+			// Send the JWT token in the Authorization header
+			var jwtToken = HttpContext.Session.GetString("JwtToken");
+			if (!string.IsNullOrEmpty(jwtToken))
+			{
+				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+			}
+
+			//use client to get the log data from the api 
+			var log = await client.GetFromJsonAsync<LogDto>($"https://localhost:7075/api/log/{id.ToString()}");
 
 
-        }
+			//if you get something by the id, then return it to the view
+			if (log is null)
+			{
+				return View();
 
-        [HttpPost]
-        public async Task<IActionResult> Edit(LogDto request)
-        {
-            try
-            {
-                //create client 
-                var client = httpClientFactory.CreateClient();
+			}
 
-                // Send the JWT token in the Authorization header
-                var jwtToken = HttpContext.Session.GetString("JwtToken");
-                if (!string.IsNullOrEmpty(jwtToken))
-                {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-                }
+			// Fetch the lists of parks and categories just like in your Add method
+			var parksResponse = await client.GetAsync("https://localhost:7075/api/parks");
+			var categoriesResponse = await client.GetAsync("https://localhost:7075/api/categories");
 
-                //create httpRequestMessage 
-                var httpRequestMessage = new HttpRequestMessage()
-                {
-                    Method = HttpMethod.Put,
-                    RequestUri = new Uri($"https://localhost:7075/api/log/{request.Id}"),
-                    Content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json")
-                };
+			//Make sure its a success?
+			parksResponse.EnsureSuccessStatusCode();
+			categoriesResponse.EnsureSuccessStatusCode();
 
-                //Send request through client 
-                var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+			//use the client to convert the Json response form the API to a list of the DTOs
+			var parks = await parksResponse.Content.ReadFromJsonAsync<List<ParkDto>>();
+			var categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryDto>>();
 
-                //Ensure Sucess
-                httpResponseMessage.EnsureSuccessStatusCode();
+			//
+			var viewModel = new UpdateLogViewModel
+			{
+				ObserverName = log.ObserverName,
+				Date = log.Date,
+				Confidence = log.Confidence,
+				Species = log.Species,
+				Count = log.Count,
+				Description = log.Description,
+				Location = log.Location,
+				LogImageUrl = log.LogImageUrl,
+				Comments = log.Comments,
+				CategoryId = log.CategoryId,
+				ParkId = log.ParkId,
+				Parks = parks,
+				Categories = categories
+			};
 
-                //convert the response coming back form the api from json to Region Dto 
-                var response = await httpResponseMessage.Content.ReadFromJsonAsync<LogDto>();
+			return View(viewModel);
 
-                //if succesful then redirect to the dit page 
-                if (response != null)
-                {
-                    return RedirectToAction("Index", "Logs");
+		}
 
-                }
+		[HttpPost]
+		[Authorize(Roles = "User, Admin")]
+		public async Task<IActionResult> Edit(LogDto request)
+		{
+			//create client 
+			var client = httpClientFactory.CreateClient();
 
-                return View();
-            }
-            catch (HttpRequestException ex)
-            {
-                return RedirectToAction("AccessDenied", "Auths");
-            }
+			// Send the JWT token in the Authorization header
+			var jwtToken = HttpContext.Session.GetString("JwtToken");
+			if (!string.IsNullOrEmpty(jwtToken))
+			{
+				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+			}
 
-        }
+			//create httpRequestMessage 
+			var httpRequestMessage = new HttpRequestMessage()
+			{
+				Method = HttpMethod.Put,
+				RequestUri = new Uri($"https://localhost:7075/api/log/{request.Id}"),
+				Content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json")
+			};
+
+			//Send request through client 
+			var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+
+			//Ensure Sucess
+			httpResponseMessage.EnsureSuccessStatusCode();
+
+			//convert the response coming back form the api from json to Region Dto 
+			var response = await httpResponseMessage.Content.ReadFromJsonAsync<LogDto>();
+
+			//if succesful then redirect to the dit page 
+			if (response != null)
+			{
+				return RedirectToAction("Index", "Logs");
+
+			}
+
+			return View();
+
+		}
 
 
-        [HttpPost]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            try
-            {
-                var client = httpClientFactory.CreateClient();
+		[HttpPost]
+		[Authorize(Roles = "User, Admin")]
+		public async Task<IActionResult> Delete(Guid id)
+		{
+			try
+			{
+				var client = httpClientFactory.CreateClient();
 
-                // Send the JWT token in the Authorization header
-                var jwtToken = HttpContext.Session.GetString("JwtToken");
-                if (!string.IsNullOrEmpty(jwtToken))
-                {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-                }
+				// Send the JWT token in the Authorization header
+				var jwtToken = HttpContext.Session.GetString("JwtToken");
+				if (!string.IsNullOrEmpty(jwtToken))
+				{
+					client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+				}
 
-                var httpResponseMessage = await client.DeleteAsync($"https://localhost:7075/api/log/{id}");
+				var httpResponseMessage = await client.DeleteAsync($"https://localhost:7075/api/log/{id}");
 
-                httpResponseMessage.EnsureSuccessStatusCode();
+				httpResponseMessage.EnsureSuccessStatusCode();
 
-                return RedirectToAction("Index", "Logs");
-            }
-            catch (Exception ex)
-            {
-                return RedirectToAction("AccessDenied", "Auths");
+				return RedirectToAction("Index", "Logs");
+			}
+			catch (Exception ex)
+			{
+				//
+				
 
-            }
+			}
+			return View();
+		}
 
-        }
-
-    }
+	}
 }

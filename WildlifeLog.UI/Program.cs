@@ -68,6 +68,8 @@ builder.Services.AddAuthentication(options =>
 	options.Cookie.HttpOnly = true;
 	options.Cookie.IsEssential = true;
 	options.SlidingExpiration = true;
+	options.AccessDeniedPath = "/Auths/AccessDenied";
+	options.LoginPath = "/Auths/Login";
 });
 
 var app = builder.Build();
