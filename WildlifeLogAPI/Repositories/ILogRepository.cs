@@ -6,7 +6,8 @@ namespace WildlifeLogAPI.Repositories
     public interface ILogRepository
     {
         //Get all
-        Task<List<Log>> GetAllAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, Guid? parkId = null, bool isAscending = true);
+        Task<List<Log>> GetAllAsync(string? filterOn = null, string? filterQuery = null, 
+            string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 20);
 
         //Get by id
         Task<Log?> GetByIdAsync(Guid id);
@@ -19,7 +20,6 @@ namespace WildlifeLogAPI.Repositories
 
         //Delete log 
         Task<Log?> DeleteAsync(Guid id);
-
 
     }
 }

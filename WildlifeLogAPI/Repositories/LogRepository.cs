@@ -45,7 +45,7 @@ namespace WildlifeLogAPI.Repositories
 		}
 
 		public async Task<List<Log>> GetAllAsync(string? filterOn = null, string? filterQuery = null,
-			string? sortBy = null, Guid? parkId = null, bool isAscending = true)
+			string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 20)
 		{
 			//get all logs 
 			var logs = dbContext.Logs.Include("Park").Include("Category").AsQueryable();
@@ -64,12 +64,6 @@ namespace WildlifeLogAPI.Repositories
 				}
 			}
 
-			// Apply park filter if parkId is provided
-			if (parkId.HasValue)
-			{
-				// Modify your logic to filter logs by park
-				logs = logs.Where(log => log.ParkId == parkId.Value);
-			}
 
 			//SOrting 
 			//check if the sortBy column has a value, if so run this code  
@@ -80,8 +74,12 @@ namespace WildlifeLogAPI.Repositories
 					logs = isAscending ? logs.OrderBy(x => x.Date) : logs.OrderByDescending(x => x.Date);
 				}
 			}
+			//Pagination 
 
-			return await logs.ToListAsync();
+			//# of results we skip
+			var skipResults = (pageNumber - 1) * pageSize;
+
+			return await logs.Skip(skipResults).Take(pageSize).ToListAsync();
 		}
 
 		public async Task<Log?> GetByIdAsync(Guid id)
@@ -125,6 +123,5 @@ namespace WildlifeLogAPI.Repositories
 
 		}
 
-
-	}
+    }
 }

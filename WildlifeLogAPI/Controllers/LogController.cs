@@ -28,11 +28,12 @@ namespace WildlifeLogAPI.Controllers
         //localhost/api/logs/?filterOn=Name&filterQuery= *what they are searchign to filter on*/&SortBy=Date&isAscenting=true
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] string? filterOn, [FromQuery] string? filterQuery,
-            [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] Guid? parkId)
+            [FromQuery] string? sortBy, [FromQuery] bool? isAscending,
+            [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20)
         {
 			
 			//Get logs domain model using repository 
-			var logsDomainModel = await logRepository.GetAllAsync(filterOn, filterQuery, sortBy,  parkId, isAscending ?? true);
+			var logsDomainModel = await logRepository.GetAllAsync(filterOn, filterQuery, sortBy, isAscending ?? true, pageNumber, pageSize);
 
             //Convert domain model to dto 
             var logsDto = mapper.Map<List<LogDto>>(logsDomainModel);

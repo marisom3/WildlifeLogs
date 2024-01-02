@@ -40,6 +40,7 @@ namespace WildlifeLogAPI.Controllers
             
             //return DTO back to the client
             return Ok(parksDto);
+            
         }
 
 
