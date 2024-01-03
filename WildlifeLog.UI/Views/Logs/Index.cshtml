@@ -5,17 +5,24 @@
 
 <h2>Your WildlifeLogs</h2>
 
-<div class="d-flex justify-content-end">
-	<a class="btn btn-primary mb-3" asp-controller="Logs" asp-action="Add">Add Log</a>
-</div>
+
+
 
 @using (Html.BeginForm("Index", "Logs", FormMethod.Get))
 {
-	<div>
-		@Html.Label("Filter by Park: ")
-		@Html.DropDownList("ParkId", ViewBag.Parks as SelectList, "All Parks", new { onchange = "this.form.submit();" })
+	<div class="my-4 d-flex justify-content-between">
+		<div class="col-md-4">
+			<label class="mr-2">Filter by Park:</label>
+			@Html.DropDownList("ParkId", ViewBag.Parks as SelectList, "All Parks", new { @class = "form-select", onchange = "this.form.submit();" })
+		</div>
+		<div>
+			<a class="btn btn-primary my-2" asp-controller="Logs" asp-action="Add">Add Log</a>
+		</div>
+
 	</div>
 }
+
+
 
 
 <div class="row">

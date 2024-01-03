@@ -56,15 +56,21 @@
 
 
 
-<h2>All WildlifeLogs</h2>
 
 @using (Html.BeginForm("Index", "Home", FormMethod.Get))
 {
-    <div class="my-4 d-flex align-items-end">
-        @Html.Label("Filter by Park:   ")
-        @Html.DropDownList("ParkId", ViewBag.Parks as SelectList, "All Parks", new { onchange = "this.form.submit();" })
+    <div class="my-4 d-flex justify-content-between">
+        <div class="col-md-4 mt-3">
+			<h2>All WildlifeLogs</h2>
+        </div>
+        <div class="col-md-4">
+            <label class="mr-2">Filter by Park:</label>
+            @Html.DropDownList("ParkId", ViewBag.Parks as SelectList, "All Parks", new { @class = "form-select", onchange = "this.form.submit();" })
+        </div>
     </div>
 }
+
+
 
 
 <div class="row">
