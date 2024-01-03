@@ -10,6 +10,7 @@ using WildlifeLogAPI.Models.DTO;
 using LogDto = WildlifeLog.UI.Models.DTO.LogDto;
 using ParkDto = WildlifeLog.UI.Models.DTO.ParkDto;
 using CategoryDto = WildlifeLog.UI.Models.DTO.CategoryDto;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WildlifeLog.UI.Controllers
 {
@@ -24,7 +25,7 @@ namespace WildlifeLog.UI.Controllers
         }
 
 		[HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(Guid? parkId)
         {
             //create list of type LogDto
             List<LogDto> logs = new List<LogDto>();
@@ -49,8 +50,15 @@ namespace WildlifeLog.UI.Controllers
                 // Append the username as a query parameter when making the request
                 var requestUri = $"https://localhost:7075/api/log?filterOn=ObserverName&filterQuery={observerName}";
 
-                //use client to talk to the API + get back all the park info 
-                var httpResponseMessage = await client.GetAsync(requestUri);
+
+				// Check if a specific park is selected for filtering
+				if (parkId.HasValue)
+				{
+					requestUri += $"&ParkId={parkId}";
+				}
+
+				//use client to talk to the API + get back all the park info 
+				var httpResponseMessage = await client.GetAsync(requestUri);
 
                 //EnsureSuccess 
                 httpResponseMessage.EnsureSuccessStatusCode();
@@ -60,6 +68,15 @@ namespace WildlifeLog.UI.Controllers
 
                 // Sort logs in descending order based on the Date property
                 logs = logs.OrderByDescending(log => log.Date).ToList();
+
+
+				// Fetch the list of parks for the dropdown
+				var parksResponse = await client.GetAsync("https://localhost:7075/api/parks");
+				parksResponse.EnsureSuccessStatusCode();
+				var parks = await parksResponse.Content.ReadFromJsonAsync<List<ParkDto>>();
+
+                // Populate the ViewBag with the list of parks
+                ViewBag.Parks = new SelectList(parks, "Id", "Name");
 
 				return View(logs);
 

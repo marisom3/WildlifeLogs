@@ -45,7 +45,7 @@ namespace WildlifeLogAPI.Repositories
 		}
 
 		public async Task<List<Log>> GetAllAsync(string? filterOn = null, string? filterQuery = null,
-			string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 20)
+			string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 20, Guid? parkId = null)
 		{
 			//get all logs 
 			var logs = dbContext.Logs.Include("Park").Include("Category").AsQueryable();
@@ -62,6 +62,12 @@ namespace WildlifeLogAPI.Repositories
 					logs = logs.Where(log => log.ObserverName == filterQuery);
 
 				}
+			}
+
+			// Additional filter for ParkId
+			if (parkId.HasValue)
+			{
+				logs = logs.Where(log => log.ParkId == parkId.Value);
 			}
 
 

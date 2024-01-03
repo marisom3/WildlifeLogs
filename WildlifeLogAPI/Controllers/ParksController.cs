@@ -27,7 +27,7 @@ namespace WildlifeLogAPI.Controllers
 
         //GET all parks: localhost/api/parks
         [HttpGet]
-        [Authorize(Roles = "Admin, User")]
+       // [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> GetAll()
         {
             //Get list from database using repository, return domain model 

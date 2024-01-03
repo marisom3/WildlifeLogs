@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using WildlifeLog.UI.Models;
@@ -18,7 +19,7 @@ namespace WildlifeLog.UI.Controllers
         }
 
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(Guid? parkId)
         {
             //create list of type LogDto 
             List<LogDto> logs = new List<LogDto>();
@@ -35,8 +36,17 @@ namespace WildlifeLog.UI.Controllers
 					client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
 				}
 
-				// Make a GET request to the API to fetch all logs
-				var httpResponseMessage = await client.GetAsync("https://localhost:7075/api/log");
+                var requestUri = "https://localhost:7075/api/log";
+
+                // Check if a specific park is selected for filtering
+                if (parkId.HasValue)
+                {
+                    requestUri += "?parkId=" + parkId;
+                }
+
+
+                // Make a GET request to the API to fetch all logs
+                var httpResponseMessage = await client.GetAsync(requestUri);
 
 				// Ensure that the request was successful (status code 2xx)
 				httpResponseMessage.EnsureSuccessStatusCode();
@@ -51,6 +61,18 @@ namespace WildlifeLog.UI.Controllers
             {
                 //log exception 
             }
+
+            // Fetch the list of parks for the dropdown
+            using (var client = httpClientFactory.CreateClient())
+            {
+                var parksResponse = await client.GetAsync("https://localhost:7075/api/parks");
+                parksResponse.EnsureSuccessStatusCode();
+                var parks = await parksResponse.Content.ReadFromJsonAsync<List<ParkDto>>();
+
+                // Populate the ViewBag with the list of parks
+                ViewBag.Parks = new SelectList(parks, "Id", "Name");
+            }
+
 
             //retrun the list of parkDto to teh View 
             return View(logs);

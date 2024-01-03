@@ -4,7 +4,7 @@
 }
 
 <div class="container ">
-	<h1 class="mb-5 display-4 text-center">Welcome To WildlifeLogs!</h1>
+	<h1 class="mb-1 display-4 text-center">Welcome To WildlifeLogs!</h1>
 
     @*Carousel*@
     <div class="carousel slide" id="slider" style="max-width: 1000px; margin: auto; height: 500px; overflow: hidden;">
@@ -57,6 +57,16 @@
 
 
 <h2>All WildlifeLogs</h2>
+
+@using (Html.BeginForm("Index", "Home", FormMethod.Get))
+{
+    <div class="my-4 d-flex align-items-end">
+        @Html.Label("Filter by Park:   ")
+        @Html.DropDownList("ParkId", ViewBag.Parks as SelectList, "All Parks", new { onchange = "this.form.submit();" })
+    </div>
+}
+
+
 <div class="row">
     @foreach (var log in Model)
     {
