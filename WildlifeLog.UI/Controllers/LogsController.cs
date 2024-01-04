@@ -25,7 +25,7 @@ namespace WildlifeLog.UI.Controllers
         }
 
 		[HttpGet]
-        public async Task<IActionResult> Index(Guid? parkId)
+        public async Task<IActionResult> Index(Guid? parkId, int page = 1, int pageSize = 12)
         {
             //create list of type LogDto
             List<LogDto> logs = new List<LogDto>();
@@ -48,7 +48,7 @@ namespace WildlifeLog.UI.Controllers
                 
                
                 // Append the username as a query parameter when making the request
-                var requestUri = $"https://localhost:7075/api/log?filterOn=ObserverName&filterQuery={observerName}";
+                var requestUri = $"https://localhost:7075/api/log?pageNumber={page}&pageSize={pageSize}&filterOn=ObserverName&filterQuery={observerName}";
 
 
 				// Check if a specific park is selected for filtering
@@ -66,8 +66,15 @@ namespace WildlifeLog.UI.Controllers
                 //Convert the JSON data to a list of LogDto and add to the log list 
                 logs.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<LogDto>>());
 
-                // Sort logs in descending order based on the Date property
-                logs = logs.OrderByDescending(log => log.Date).ToList();
+				// Get the total number of pages from the response headers
+				if (httpResponseMessage.Headers.TryGetValues("X-Total-Pages", out var totalPagesValues))
+				{
+					ViewBag.TotalPages = Convert.ToInt32(totalPagesValues.First());
+					ViewBag.CurrentPage = page;
+				}
+
+				// Sort logs in descending order based on the Date property
+				logs = logs.OrderByDescending(log => log.Date).ToList();
 
 
 				// Fetch the list of parks for the dropdown

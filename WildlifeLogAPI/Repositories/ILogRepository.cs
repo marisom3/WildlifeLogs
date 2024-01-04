@@ -8,9 +8,12 @@ namespace WildlifeLogAPI.Repositories
         //Get all
         Task<List<Log>> GetAllAsync(string? filterOn = null, string? filterQuery = null, 
             string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 20, Guid? parkId = null);
-
+		
+        //get total logs for pagination
+        Task<int> GetTotalCountAsync();
+		
         //Get by id
-        Task<Log?> GetByIdAsync(Guid id);
+		Task<Log?> GetByIdAsync(Guid id);
 
         //Create log 
         Task<Log> CreateAsync(Log log);

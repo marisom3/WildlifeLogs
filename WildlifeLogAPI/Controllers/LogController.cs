@@ -35,14 +35,47 @@ namespace WildlifeLogAPI.Controllers
 			//Get logs domain model using repository 
 			var logsDomainModel = await logRepository.GetAllAsync(filterOn, filterQuery, sortBy, isAscending ?? true, pageNumber, pageSize, parkId);
 
-            //Convert domain model to dto 
-            var logsDto = mapper.Map<List<LogDto>>(logsDomainModel);
+			// Get the total count of all logs (without pagination)
+			var totalCount = await logRepository.GetTotalCountAsync();
+
+			// Calculate the total pages based on the total count and page size
+			var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+			// Set X-Total-Count header in the response
+			Response.Headers.Add("X-Total-Pages", totalCount.ToString());
+
+			//Convert domain model to dto 
+			var logsDto = mapper.Map<List<LogDto>>(logsDomainModel);
 
             //return to client
             return Ok(logsDto);
         }
 
-        [HttpGet]
+
+
+		// Add this method to your LogController
+		[HttpGet]
+		[Route("totalcount")]
+		public async Task<IActionResult> GetTotalCount()
+		{
+			try
+			{
+				// Call the repository or database to get the total count of logs
+				var totalCount = await logRepository.GetTotalCountAsync(); // Make sure to implement this method in your repository
+
+				// Return the total count as JSON
+				return Ok(totalCount);
+			}
+			catch (Exception ex)
+			{
+				// Log the exception and return an error response
+				return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving total count");
+			}
+		}
+
+
+
+		[HttpGet]
         [Route("{id:Guid}")]
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)

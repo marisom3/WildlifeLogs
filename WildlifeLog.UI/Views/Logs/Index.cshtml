@@ -50,7 +50,7 @@
 					<div class="modal-header">
 						<h1 class="modal-title fs-5">
 							@log.Species
-							
+
 						</h1>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
@@ -72,10 +72,10 @@
 								<p><b>Comments: </b> @log.Comments</p>
 
 								<div class="d-flex">
-								<a asp-controller="Logs" asp-action="Edit" asp-route-id="@log.Id" class="btn btn-primary me-4">Edit</a>
-								<form method="post" action="@Url.Action("Delete", "Logs", new { id = log.Id })">
-									<button type="submit" class="btn btn-danger">Delete</button>
-								</form>
+									<a asp-controller="Logs" asp-action="Edit" asp-route-id="@log.Id" class="btn btn-primary me-4">Edit</a>
+									<form method="post" action="@Url.Action("Delete", "Logs", new { id = log.Id })">
+										<button type="submit" class="btn btn-danger">Delete</button>
+									</form>
 								</div>
 							</div>
 						</div>
@@ -85,4 +85,18 @@
 			</div>
 		</div>
 	}
+</div>
+
+<!-- Pagination controls -->
+<div>
+	<a href="@Url.Action("Index", new { page = 1 })">First</a>
+	<a href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1 })">Previous</a>
+
+	@for (int i = 1; i <= ViewBag.TotalPages; i++)
+	{
+		<a href="@Url.Action("Index", new { page = i })">@i</a>
+	}
+
+	<a href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1 })">Next</a>
+	<a href="@Url.Action("Index", new { page = ViewBag.TotalPages })">Last</a>
 </div>

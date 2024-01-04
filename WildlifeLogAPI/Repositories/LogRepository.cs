@@ -88,6 +88,11 @@ namespace WildlifeLogAPI.Repositories
 			return await logs.Skip(skipResults).Take(pageSize).ToListAsync();
 		}
 
+		public async Task<int> GetTotalCountAsync()
+		{
+			return await dbContext.Logs.CountAsync();
+		}
+
 		public async Task<Log?> GetByIdAsync(Guid id)
 		{
 			return await dbContext.Logs
