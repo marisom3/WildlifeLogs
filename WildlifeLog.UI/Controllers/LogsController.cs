@@ -11,6 +11,7 @@ using LogDto = WildlifeLog.UI.Models.DTO.LogDto;
 using ParkDto = WildlifeLog.UI.Models.DTO.ParkDto;
 using CategoryDto = WildlifeLog.UI.Models.DTO.CategoryDto;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using WildlifeLogAPI.Repositories;
 
 namespace WildlifeLog.UI.Controllers
 {
@@ -23,6 +24,14 @@ namespace WildlifeLog.UI.Controllers
             this.httpClientFactory = httpClientFactory;
 
         }
+		private async Task<int> GetTotalLogCount(string observerName)
+		{
+			var client = httpClientFactory.CreateClient();
+			var countResponse = await client.GetAsync($"https://localhost:7075/api/log/totalcount?observerName={observerName}");
+			countResponse.EnsureSuccessStatusCode();
+			return await countResponse.Content.ReadFromJsonAsync<int>();
+		}
+
 
 		[HttpGet]
         public async Task<IActionResult> Index(Guid? parkId, int page = 1, int pageSize = 12)
@@ -66,12 +75,14 @@ namespace WildlifeLog.UI.Controllers
                 //Convert the JSON data to a list of LogDto and add to the log list 
                 logs.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<LogDto>>());
 
-				// Get the total number of pages from the response headers
-				if (httpResponseMessage.Headers.TryGetValues("X-Total-Pages", out var totalPagesValues))
-				{
-					ViewBag.TotalPages = Convert.ToInt32(totalPagesValues.First());
-					ViewBag.CurrentPage = page;
-				}
+
+				// Calculate total pages based on observer's log
+				int totalCount = await GetTotalLogCount(observerName);
+				int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+				// Set ViewBag properties
+				ViewBag.CurrentPage = page;
+				ViewBag.TotalPages = totalPages;
 
 				// Sort logs in descending order based on the Date property
 				logs = logs.OrderByDescending(log => log.Date).ToList();

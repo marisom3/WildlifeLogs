@@ -88,9 +88,13 @@ namespace WildlifeLogAPI.Repositories
 			return await logs.Skip(skipResults).Take(pageSize).ToListAsync();
 		}
 
-		public async Task<int> GetTotalCountAsync()
+		public async Task<int> GetTotalCountAsync(string observerName)
 		{
-			return await dbContext.Logs.CountAsync();
+			// Use your database or data source to get the total count
+			// Consider filtering by ObserverName
+			var totalCount = await dbContext.Logs.CountAsync(log => log.ObserverName == observerName);
+
+			return totalCount;
 		}
 
 		public async Task<Log?> GetByIdAsync(Guid id)
