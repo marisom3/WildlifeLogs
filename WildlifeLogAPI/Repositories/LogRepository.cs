@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WildlifeLogAPI.Data;
 using WildlifeLogAPI.Models.DomainModels;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace WildlifeLogAPI.Repositories
@@ -87,15 +88,35 @@ namespace WildlifeLogAPI.Repositories
 
 			return await logs.Skip(skipResults).Take(pageSize).ToListAsync();
 		}
-
-		public async Task<int> GetTotalCountAsync(string observerName)
+		public async Task<int> GetTotalCountAsync(string observerName, Guid? parkId, string? filterOn = null, string? filterQuery = null)
 		{
 			// Use your database or data source to get the total count
-			// Consider filtering by ObserverName
-			var totalCount = await dbContext.Logs.CountAsync(log => log.ObserverName == observerName);
+			var query = dbContext.Logs.AsQueryable();
+
+			// Filter by ObserverName
+			query = query.Where(log => log.ObserverName == observerName);
+
+			// Filter by ParkId if provided
+			if (parkId.HasValue)
+			{
+				query = query.Where(log => log.ParkId == parkId.Value);
+			}
+
+			// Apply additional filters if provided
+			if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
+			{
+				if (filterOn.Equals("ObserverName", StringComparison.OrdinalIgnoreCase))
+				{
+					query = query.Where(log => log.ObserverName == filterQuery);
+				}
+				// Add more conditions for other filters if needed
+			}
+
+			var totalCount = await query.CountAsync();
 
 			return totalCount;
 		}
+
 
 		public async Task<Log?> GetByIdAsync(Guid id)
 		{

@@ -10,7 +10,7 @@ namespace WildlifeLogAPI.Repositories
             string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 20, Guid? parkId = null);
 		
         //get total logs for pagination
-        Task<int> GetTotalCountAsync(string observerName);
+        Task<int> GetTotalCountAsync(string observerName, Guid? parkId, string? filterOn = null, string? filterQuery = null);
 		
         //Get by id
 		Task<Log?> GetByIdAsync(Guid id);

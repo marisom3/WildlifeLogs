@@ -24,10 +24,13 @@ namespace WildlifeLog.UI.Controllers
             this.httpClientFactory = httpClientFactory;
 
         }
-		private async Task<int> GetTotalLogCount(string observerName)
+		private async Task<int> GetTotalLogCount(string observerName, Guid? parkId, string? filterOn = null, string? filterQuery = null)
 		{
 			var client = httpClientFactory.CreateClient();
-			var countResponse = await client.GetAsync($"https://localhost:7075/api/log/totalcount?observerName={observerName}");
+			var parkFilter = parkId.HasValue ? $"&parkId={parkId}" : "";
+			var filterParameters = !string.IsNullOrEmpty(filterOn) && !string.IsNullOrEmpty(filterQuery) ? $"&filterOn={filterOn}&filterQuery={filterQuery}" : "";
+
+			var countResponse = await client.GetAsync($"https://localhost:7075/api/log/totalcount?observerName={observerName}{parkFilter}{filterParameters}");
 			countResponse.EnsureSuccessStatusCode();
 			return await countResponse.Content.ReadFromJsonAsync<int>();
 		}
@@ -77,12 +80,13 @@ namespace WildlifeLog.UI.Controllers
 
 
 				// Calculate total pages based on observer's log
-				int totalCount = await GetTotalLogCount(observerName);
+				int totalCount = await GetTotalLogCount(observerName, parkId);
 				int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
 				// Set ViewBag properties
 				ViewBag.CurrentPage = page;
 				ViewBag.TotalPages = totalPages;
+				ViewBag.ParkId = parkId;
 
 				// Sort logs in descending order based on the Date property
 				logs = logs.OrderByDescending(log => log.Date).ToList();
