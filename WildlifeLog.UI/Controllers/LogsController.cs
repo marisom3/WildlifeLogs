@@ -24,14 +24,26 @@ namespace WildlifeLog.UI.Controllers
             this.httpClientFactory = httpClientFactory;
 
         }
-		private async Task<int> GetTotalLogCount(string observerName, Guid? parkId, string? filterOn = null, string? filterQuery = null)
+
+        //private cotroller to get the total log ocunt after filtering for parkId an dobserverName
+		private async Task<int> GetTotalLogCount(string? observerName, Guid? parkId, string? filterOn = null, string? filterQuery = null)
 		{
+            //create client 
 			var client = httpClientFactory.CreateClient();
+
+            //if parkid is passed in, add it to the URL
 			var parkFilter = parkId.HasValue ? $"&parkId={parkId}" : "";
+
+            //same for filterOna nd filterQuery
 			var filterParameters = !string.IsNullOrEmpty(filterOn) && !string.IsNullOrEmpty(filterQuery) ? $"&filterOn={filterOn}&filterQuery={filterQuery}" : "";
 
+            //use the client to send the rewuest to the API to get the total # of logs that fit the parameters
 			var countResponse = await client.GetAsync($"https://localhost:7075/api/log/totalcount?observerName={observerName}{parkFilter}{filterParameters}");
+
+            //Ensure success
 			countResponse.EnsureSuccessStatusCode();
+
+            //Convert to int
 			return await countResponse.Content.ReadFromJsonAsync<int>();
 		}
 
@@ -59,17 +71,17 @@ namespace WildlifeLog.UI.Controllers
                 var observerName = User.Identity.Name;
                 
                
-                // Append the username as a query parameter when making the request
+                // Append the username, page size, and pagenumber as a query parameter when making the request
                 var requestUri = $"https://localhost:7075/api/log?pageNumber={page}&pageSize={pageSize}&filterOn=ObserverName&filterQuery={observerName}";
 
 
-				// Check if a specific park is selected for filtering
+				// Check if a specific park is selected for filtering and if so append it to the requestUri
 				if (parkId.HasValue)
 				{
 					requestUri += $"&ParkId={parkId}";
 				}
 
-				//use client to talk to the API + get back all the park info 
+				//use client to talk to the API + get back all the logs
 				var httpResponseMessage = await client.GetAsync(requestUri);
 
                 //EnsureSuccess 
@@ -79,11 +91,13 @@ namespace WildlifeLog.UI.Controllers
                 logs.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<LogDto>>());
 
 
-				// Calculate total pages based on observer's log
+				// Calculate total log count based on how many logs match the parkId (from dropdown) and observerName aka user thats logged in 
 				int totalCount = await GetTotalLogCount(observerName, parkId);
+
+                //Calculate total pages
 				int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-				// Set ViewBag properties
+				// Set ViewBag properties to access in View
 				ViewBag.CurrentPage = page;
 				ViewBag.TotalPages = totalPages;
 				ViewBag.ParkId = parkId;

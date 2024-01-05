@@ -1,6 +1,8 @@
 ﻿@model IEnumerable<WildlifeLog.UI.Models.DTO.LogDto>
 
 @{
+	// Check if there are no logs for the selected park
+	bool noLogs = Model == null || !Model.Any();
 }
 
 <h2>Your WildlifeLogs</h2>
@@ -22,7 +24,12 @@
 	</div>
 }
 
-
+@if (noLogs)
+{
+    <p>No logs available for the selected park.</p>
+}
+else
+{
 
 
 <div class="row">
@@ -132,3 +139,5 @@
 
 	</ul>
 </nav>
+
+		}

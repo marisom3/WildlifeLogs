@@ -29,21 +29,23 @@ namespace WildlifeLogAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] string? filterOn, [FromQuery] string? filterQuery,
             [FromQuery] string? sortBy, [FromQuery] bool? isAscending,
-            [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20, [FromQuery] Guid? parkId = null, [FromQuery] string? observerName = null)
+            [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 12, [FromQuery] Guid? parkId = null, [FromQuery] string? observerName = null)
         {
 			
 			//Get logs domain model using repository 
 			var logsDomainModel = await logRepository.GetAllAsync(filterOn, filterQuery, sortBy, isAscending ?? true, pageNumber, pageSize, parkId);
 
-			// Get the total count of all logs (without pagination)
+			// Get the total count of all logs (if filtered by observername and parkId) 
 			var totalCount = await logRepository.GetTotalCountAsync(observerName, parkId);
 
 			// Calculate the total pages based on the total count and page size
 			var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
+            // Set total pages in the response headers
+            Response.Headers.Add("X-Total-Pages", totalPages.ToString());
 
-			//Convert domain model to dto 
-			var logsDto = mapper.Map<List<LogDto>>(logsDomainModel);
+            //Convert domain model to dto 
+            var logsDto = mapper.Map<List<LogDto>>(logsDomainModel);
 
             //return to client
             return Ok(logsDto);
@@ -54,12 +56,12 @@ namespace WildlifeLogAPI.Controllers
 		// Get Total count 
 		[HttpGet]
 		[Route("totalcount")]
-		public async Task<IActionResult> GetTotalCount(string observerName, Guid? parkId)
+		public async Task<IActionResult> GetTotalCount(string? observerName, Guid? parkId)
 		{
 			try
 			{
 				// Call the repository or database to get the total count of logs
-				var totalCount = await logRepository.GetTotalCountAsync(observerName, parkId); // Make sure to implement this method in your repository
+				var totalCount = await logRepository.GetTotalCountAsync(observerName, parkId); 
 
 				// Return the total count as JSON
 				return Ok(totalCount);

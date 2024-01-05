@@ -72,7 +72,7 @@ namespace WildlifeLogAPI.Repositories
 			}
 
 
-			//SOrting 
+			//Sorting 
 			//check if the sortBy column has a value, if so run this code  
 			if (string.IsNullOrWhiteSpace(sortBy) == false)
 			{
@@ -88,16 +88,20 @@ namespace WildlifeLogAPI.Repositories
 
 			return await logs.Skip(skipResults).Take(pageSize).ToListAsync();
 		}
-		public async Task<int> GetTotalCountAsync(string observerName, Guid? parkId, string? filterOn = null, string? filterQuery = null)
+		public async Task<int> GetTotalCountAsync(string? observerName, Guid? parkId, string? filterOn = null, string? filterQuery = null)
 		{
-			// Use your database or data source to get the total count
+			// set up base query
 			var query = dbContext.Logs.AsQueryable();
 
-			// Filter by ObserverName
-			query = query.Where(log => log.ObserverName == observerName);
+            // Filter by ObserverName if it is not null or empty
+            if (!string.IsNullOrWhiteSpace(observerName))
+            {
+                query = query.Where(log => log.ObserverName == observerName);
+            }
 
-			// Filter by ParkId if provided
-			if (parkId.HasValue)
+
+            // Filter by ParkId if provided
+            if (parkId.HasValue)
 			{
 				query = query.Where(log => log.ParkId == parkId.Value);
 			}
@@ -109,7 +113,7 @@ namespace WildlifeLogAPI.Repositories
 				{
 					query = query.Where(log => log.ObserverName == filterQuery);
 				}
-				// Add more conditions for other filters if needed
+				
 			}
 
 			var totalCount = await query.CountAsync();
