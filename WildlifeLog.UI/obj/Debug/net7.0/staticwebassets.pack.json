@@ -5,6 +5,10 @@
       "PackagePath": "staticwebassets\\WildlifeLog.UI.bundle.scp.css"
     },
     {
+      "Id": "C:\\Users\\17146\\Documents\\WildlifeLog\\WildlifeLog\\WildlifeLog.UI\\wwwroot\\css\\CustomCSS.css",
+      "PackagePath": "staticwebassets\\css\\CustomCSS.css"
+    },
+    {
       "Id": "C:\\Users\\17146\\Documents\\WildlifeLog\\WildlifeLog\\WildlifeLog.UI\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },

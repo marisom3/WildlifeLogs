@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "MeTRxWOwSp14yEzryr8bqbo7YpN+UmzPmsb0cXLAWlQ=",
+  "Hash": "c4SgsWaCdY9X/bfLqosBJjVRUQvgkpg4Bm0Rkn0y00E=",
   "Source": "WildlifeLog.UI",
   "BasePath": "_content/WildlifeLog.UI",
   "Mode": "Default",
@@ -61,6 +61,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\17146\\Documents\\WildlifeLog\\WildlifeLog\\WildlifeLog.UI\\obj\\Debug\\net7.0\\scopedcss\\projectbundle\\WildlifeLog.UI.bundle.scp.css"
+    },
+    {
+      "Identity": "C:\\Users\\17146\\Documents\\WildlifeLog\\WildlifeLog\\WildlifeLog.UI\\wwwroot\\css\\CustomCSS.css",
+      "SourceId": "WildlifeLog.UI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\17146\\Documents\\WildlifeLog\\WildlifeLog\\WildlifeLog.UI\\wwwroot\\",
+      "BasePath": "_content/WildlifeLog.UI",
+      "RelativePath": "css/CustomCSS.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\CustomCSS.css"
     },
     {
       "Identity": "C:\\Users\\17146\\Documents\\WildlifeLog\\WildlifeLog\\WildlifeLog.UI\\wwwroot\\css\\site.css",

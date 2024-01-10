@@ -7,7 +7,7 @@
 
 <!-- "Create User" Button -->
 <div class="mb-3 d-flex justify-content-end">
-    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalCreateUser">
+    <button type="button" class="btn custom-button-color" data-bs-toggle="modal" data-bs-target="#modalCreateUser">
         Create User
     </button>
 </div>
@@ -39,7 +39,7 @@
 					}
 				</td>
                 <td>
-                    <a asp-controller="AdminUsers" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-light">Edit</a>
+                    <a asp-controller="AdminUsers" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-primary">Edit</a>
                 </td>
                 <td>
                     <form method="post" asp-controller="AdminUsers" asp-action="Delete" asp-route-id="@user.Id">
@@ -90,7 +90,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="submit" class="btn custom-button-color">Save changes</button>
                 </div>
             </div>
         </div>

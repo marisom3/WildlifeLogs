@@ -5,10 +5,7 @@
 	bool noLogs = Model == null || !Model.Any();
 }
 
-<h2>Your WildlifeLogs</h2>
-
-
-
+<h2>Your WildlifeLogs</h2
 
 @using (Html.BeginForm("Index", "Logs", FormMethod.Get))
 {
@@ -18,7 +15,7 @@
 			@Html.DropDownList("ParkId", ViewBag.Parks as SelectList, "All Parks", new { @class = "form-select", onchange = "this.form.submit();" })
 		</div>
 		<div>
-			<a class="btn btn-primary my-2" asp-controller="Logs" asp-action="Add">Add Log</a>
+			<a class="btn custom-button-color my-2" asp-controller="Logs" asp-action="Add">Add Log</a>
 		</div>
 
 	</div>
@@ -26,7 +23,7 @@
 
 @if (noLogs)
 {
-    <p>No logs available for the selected park.</p>
+    <p class="text-primary">No logs available for the selected park.</p>
 }
 else
 {
