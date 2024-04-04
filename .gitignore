@@ -1,0 +1,16 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/WebApplication1/obj/Release/net7.0/WebApplication1.GlobalUsings.g.cs
+
+# Ignore Visual Studio temporary files
+.vs/
+*.vsidx
+*.suo
+*.cache
+
+# Ignore compiled binaries
+/bin/
+/obj/
+/WildlifeLogAPI/obj/WildlifeLogAPI.csproj.nuget.dgspec.json
