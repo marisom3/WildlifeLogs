@@ -1,0 +1,23 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+*.editorconfig
+
+
+# Ignore Visual Studio temporary files
+.vs/
+*.vsidx
+*.suo
+*.cache
+
+# Ignore compiled binaries
+/bin/
+/obj/
+*.cs
+/WildlifeLogAPI/obj/Debug/net7.0/WildlifeLogAPI.GeneratedMSBuildEditorConfig.editorconfig
+/WildlifeLogAPI/obj/Debug/net7.0/WildlifeLogAPI.assets.cache
+/WildlifeLog.UI/obj/Debug/net7.0/WildlifeLog.UI.csproj.AssemblyReference.cache
+/WildlifeLog.UI/obj/Debug/net7.0/WildlifeLog.UI.assets.cache
+/WildlifeLog.UI/obj/Debug/net7.0/WildlifeLog.UI.GeneratedMSBuildEditorConfig.editorconfig
+/.vs/WildlifeLog/v17/.suo
