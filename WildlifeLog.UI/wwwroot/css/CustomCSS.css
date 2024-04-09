@@ -6,3 +6,9 @@
 .custom-background {
     background-color: #9ebe99;
 }
+
+@media (max-width: 575px) {
+    #slider {
+        display: none;
+    }
+}
