@@ -1,28 +1,38 @@
 ﻿@model IEnumerable<WildlifeLog.UI.Models.DTO.LogDto>
 
 @{
-	// Check if there are no logs for the selected park
 	bool noLogs = Model == null || !Model.Any();
+	// Check if park is selected
+	bool parkSelected = ViewBag.ParkId != null;
+
 }
 
-<h2>Your WildlifeLogs</h2
+
+
 
 @using (Html.BeginForm("Index", "Logs", FormMethod.Get))
 {
-	<div class="my-4 d-flex justify-content-between">
+	<div class= "my-4 d-flex justify-content-between">
 		<div class="col-md-4">
-			<label class="mr-2">Filter by Park:</label>
-			@Html.DropDownList("ParkId", ViewBag.Parks as SelectList, "All Parks", new { @class = "form-select", onchange = "this.form.submit();" })
+			<label for="ParkId">Filter by Park:</label>
+			@Html.DropDownList("ParkId", ViewBag.Parks as SelectList, "Select a Park", new { @class = "form-control", onchange = "this.form.submit();" })
 		</div>
 		<div>
 			<a class="btn custom-button-color my-2" asp-controller="Logs" asp-action="Add">Add Log</a>
 		</div>
-@if (noLogs)
+		
+	</div>
+}
+
+@if (noLogs && parkSelected)
 {
-    <p class="text-primary">No logs available for the selected park.</p>
+	<div class="alert alert-info" role="alert">
+		No logs available for the selected park.
+	</div>
 }
 else
 {
+	
 
 
 <div class="row">
@@ -133,4 +143,4 @@ else
 	</ul>
 </nav>
 
-		}
+}

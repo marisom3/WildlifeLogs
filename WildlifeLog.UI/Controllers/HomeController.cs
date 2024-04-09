@@ -18,7 +18,7 @@ namespace WildlifeLog.UI.Controllers
             this.httpClientFactory = httpClientFactory;
         }
 
-        //private cotroller to get the total log ocunt after filtering for parkId 
+        //private controller to get the total log count after filtering for parkId 
         private async Task<int> GetTotalLogCount(Guid? parkId, string? filterOn = null, string? filterQuery = null)
         {
             //create client 

@@ -25,7 +25,7 @@ namespace WildlifeLog.UI.Controllers
 
         }
 
-        //private cotroller to get the total log ocunt after filtering for parkId an dobserverName
+        //private cotroller to get the total log count after filtering for parkId and observerName
 		private async Task<int> GetTotalLogCount(string? observerName, Guid? parkId, string? filterOn = null, string? filterQuery = null)
 		{
             //create client 
@@ -37,7 +37,7 @@ namespace WildlifeLog.UI.Controllers
             //same for filterOna nd filterQuery
 			var filterParameters = !string.IsNullOrEmpty(filterOn) && !string.IsNullOrEmpty(filterQuery) ? $"&filterOn={filterOn}&filterQuery={filterQuery}" : "";
 
-            //use the client to send the rewuest to the API to get the total # of logs that fit the parameters
+            //use the client to send the request to the API to get the total # of logs that fit the parameters
 			var countResponse = await client.GetAsync($"https://localhost:7075/api/log/totalcount?observerName={observerName}{parkFilter}{filterParameters}");
 
             //Ensure success
